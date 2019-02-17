@@ -1,0 +1,566 @@
+html,
+body {
+    height: 100%;
+    background-color: #fafafa;
+}
+
+::selection {
+    background: #fff2a8; /* Safari */
+}
+
+.wrap {
+    min-height: 100%;
+    height: auto;
+    margin: 0 auto -60px;
+    padding: 0 0 60px;
+}
+
+.wrap > .container {
+    padding: 50px 0px 30px;
+}
+
+.footer {
+    height: 60px;
+    background-color: #f5f5f5;
+    border-top: 1px solid #ddd;
+    padding-top: 20px;
+}
+
+.jumbotron {
+    text-align: center;
+    background-color: transparent;
+}
+
+.jumbotron .btn {
+    font-size: 21px;
+    padding: 14px 24px;
+}
+
+.not-set {
+    color: #c55;
+    font-style: italic;
+}
+
+/* add sorting icons to gridview sort links */
+a.asc:after, a.desc:after {
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    padding-left: 5px;
+}
+
+a.asc:after {
+    content: "\e151";
+}
+
+a.desc:after {
+    content: "\e152";
+}
+
+.sort-numerical a.asc:after {
+    content: "\e153";
+}
+
+.sort-numerical a.desc:after {
+    content: "\e154";
+}
+
+.sort-ordinal a.asc:after {
+    content: "\e155";
+}
+
+.sort-ordinal a.desc:after {
+    content: "\e156";
+}
+
+.grid-view td {
+    white-space: nowrap;
+}
+
+.grid-view .filters input,
+.grid-view .filters select {
+    min-width: 50px;
+}
+
+.hint-block {
+    display: block;
+    margin-top: 5px;
+    color: #999;
+}
+
+.error-summary {
+    color: #a94442;
+    background: #fdf7f7;
+    border-left: 3px solid #eed3d7;
+    padding: 10px 20px;
+    margin: 0 0 15px 0;
+}
+
+/* align the logout "link" (button in form) of the navbar */
+.nav li > form > button.logout {
+    padding: 15px;
+    border: none;
+}
+
+@media(max-width:767px) {
+    .nav li > form > button.logout {
+        display:block;
+        text-align: left;
+        width: 100%;
+        padding: 10px 15px;
+    }
+}
+
+.nav > li > form > button.logout:focus,
+.nav > li > form > button.logout:hover {
+    text-decoration: none;
+}
+
+.nav > li > form > button.logout:focus {
+    outline: none;
+}
+
+.navbar .navbar-brand{
+    background: transparent;
+    color: white;
+    font-size: 24px;
+    font-family: 'Comfortaa', cursive;
+}
+
+#back-top{
+    background-image: url("/frontend/web/uploads/1.png");
+    width: 100%;
+    box-shadow: 0px 1px 10px #c9c9c9;
+    transition: all 0.2s;
+}
+
+.navbar{
+    font-size: 14px;
+    background-color: transparent;
+    border-width: 0px;
+    border-radius: 0px;
+}
+
+.navbar .navbar-nav>li>a{
+    color: white;
+    background-color: transparent;
+    font-family: Trebuchet MS;
+}
+
+.navbar .navbar-nav>li>a:hover,
+.navbar .navbar-nav>li>a:focus {
+    color: rgba(255, 255, 255, 1);
+    background-color: rgb(224, 221, 221);
+    transition: all 0.2s;
+}
+
+.navbar .navbar-nav>.active>a,
+.navbar .navbar-nav>.active>a:hover,
+.navbar .navbar-nav>.active>a:focus {
+    color: black;
+    background-color: rgb(255, 255, 255);
+    font-size: 16px;
+}
+
+.navbar .navbar-toggle {
+    border-color: #ffffff;
+}
+
+.navbar .navbar-toggle:hover,
+.navbar .navbar-toggle:focus {
+    background-color: transparent;
+}
+
+.navbar-header::after{
+    color:white;
+}
+
+@media only screen and (max-width : 767px) {
+    .navbar .navbar-nav>li>a {
+        color:black;
+    }
+
+    .navbar-nav{
+        background-color: white;
+    }
+
+    .modal-dialog{
+        margin: 0;
+    }
+}
+
+#map{
+    width: 100%;
+    height: 400px;
+}
+
+.menu-down{
+    transition: all .5s;
+    background-color: rgb(255, 255, 255);
+}
+
+.active-down{
+    color: white;
+    background-color: rgb(0, 0, 0);
+}
+
+.scroll-bar{
+    background: #ffbf38;
+    height: 2px;
+    width: 0%;
+    position: fixed;
+    z-index: 9999;
+}
+
+.big-footer{
+    background-color: #e6e6e6;
+    padding: 30px;
+    text-align: center;
+   /* box-shadow: 0px 1px 10px #c9c9c9;*/
+}
+
+.font-footer{
+    font-family: Script Std, cursive;
+    font-size: 14px;
+    color: black;    
+}
+
+.setka-pict{
+    filter: invert(100%);
+    transition: all .2s;
+}
+
+.setka-pict:hover{
+    opacity: .8;
+}
+
+.middle-cont{
+    margin: 0px;
+}
+
+.search-posts{
+    background-color: white;
+    display: inline-block;
+    margin-top: 25px;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 20px;
+    font-weight: bold;
+    font-family: Script Std, cursive;
+    cursor: pointer;
+    box-shadow: inset 0px 1px 10px #ffb834;
+    transition: all 0.2s;
+}
+
+.search-posts:hover{
+    box-shadow: inset 0px 1px 3px #ffb834;
+}
+
+.text-search{
+    padding-right: 5px;
+    transition: all 0.2s;
+}
+
+.span-icon{
+    color: #ffd04f;
+    transition: all 0.2s;
+}
+
+.search-posts:hover > .span-icon{
+    color: #ff9425;
+}
+
+.search-posts:hover > .text-search{
+    letter-spacing: 1px;
+}
+
+.modal-content{
+    border-radius: 3px;
+}
+
+.close-modal-span{
+    font-size: 35px;
+    font-weight: normal;
+    color: rgb(255, 136, 0);
+}
+
+.search-place-input{
+    font-size: 22px;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-radius: 0px;
+    border-color: rgb(224, 224, 224); 
+    color: black;
+    outline: none;
+}
+
+.search-place-input:focus{
+    border-color: rgb(190, 190, 190); 
+}
+
+::placeholder {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.sign-inputs{
+    background-color: #fcfcfb;
+    height: 3em;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    transition: all .2s;
+}
+
+.sign-inputs:hover{
+    background-color: white;
+}
+
+.sign-inputs:focus{
+    background-color: white;
+    border-color: #ffdd9f;
+} 
+
+.form-control{
+    box-shadow: none !important;
+    -webkit-box-shadow: none;
+}
+
+.has-error > .form-control{
+    border-color: #ff3223;
+}
+
+.has-error > .form-control:focus{
+    border-color: rgb(224, 93, 17);
+}
+
+.has-error > .help-block-error{
+    font-size: .9em;
+    color: #ff3223;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.has-success > .form-control{
+    border-color: #b3ebbe;
+}
+
+.has-success > .form-control:focus{
+    border-color: #8cd89c;
+}
+
+.modal-header{
+    padding-top: 25px;
+    padding-bottom: 0px;
+    border-bottom: none;
+}
+
+.modal-body{
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.modal-body > div{
+    font-size: 16px;
+    font-weight: 700;
+    color: black;
+}
+
+.searched-city{
+    padding: 12px 22px;
+    cursor: pointer;
+    transition: padding .2s ease;
+}
+
+.searched-city:hover{
+    padding-left: 30px;
+}
+
+.searched-city:hover{
+    background-color: rgb(248, 248, 248);
+}
+
+.recent-search{
+    padding: 12px 22px;
+    font-weight: 100;
+    color: rgb(182, 181, 181);
+    font-size: 12px;
+}
+
+.city-parent{
+    font-size: 14px;
+    color: rgb(88, 88, 88);
+    font-weight: normal;
+    display: block;
+    margin-top: 3px;
+}
+
+.in{
+    z-index: 10000;
+}
+
+#modal-default{
+    z-index: 10001;
+}
+
+.cko{
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0px 1px 3px #c9c9c9;
+}
+
+.wrap-sign {
+    min-height: 100%;
+    height: auto;
+    margin: 0 auto -60px;
+    padding: 0 0 60px;
+}
+
+.wrap-sign > .container-fluid{
+    margin: 0px;
+    padding: 0px;
+}
+
+.wrap-sign > .container-fluid > .middle-sign {
+    background: white;
+    padding: 0px;
+    margin-top: 60px;
+    margin-left: 0px;
+    margin-right: 0px;
+    border-radius: 30px;
+    box-shadow: 0px 1px 5px #c9c9c9;
+}
+
+.top-sign-picture{
+    background-image: url("/frontend/web/uploads/1.png");
+    height: 100px;
+    border-radius: 30px 30px 0 0;
+    text-align: center;
+    line-height: 100px;
+}
+
+.top-sign-picture > a{
+    color: white;
+    font-size: 36px;
+    font-weight: bold;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: normal;
+    font-family: Trebuchet MS;
+    padding-left: 10px;
+    text-decoration: none;
+    transition: all .2s;
+}
+
+.top-sign-picture > a:hover{
+    opacity: .8;
+}
+
+.pad-sign{
+    padding: 0 15px;
+}
+
+.site-login, .site-signup{
+    padding: 50px 20px 20px;
+}
+
+.img-and-span-right{
+    text-align: center;
+    vertical-align: middle;
+    padding-top: 40px;
+}
+
+.above-sign-span{
+    border-radius: 50%;
+    box-shadow: 0px 0px 1px #c9c9c9;
+}
+
+.under-sign-img{
+    padding-top: 20px;
+    display: block;
+    color: #202124;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+}
+
+.field-loginform-rememberme{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.sign-advice{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+@media only screen and (max-width : 767px) {
+    .wrap-sign > .container-fluid > .middle-sign {
+        border-radius: 0;
+        margin: 0px;
+    }
+
+    .top-sign-picture{
+        border-radius: 0;
+    }
+
+    .img-and-span-right{
+        display: none;
+    }
+}
+
+.sign-btn{
+    padding: 6px 45px;
+    border-radius: 5px;
+    background-color: #d8e0b1;
+    border: none;
+    color: white;
+    font-size: 1.2em;
+    font-weight: 700;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    transition: all .2s;
+}
+
+.sign-btn:hover{
+    background-color: #9bdcb2;
+}
+
+.checkbox{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.li-heigth-max{
+    height: 50px;
+    vertical-align: middle;
+    padding-top: 5px;
+    padding-left: 10px;
+}
+
+.btn-profile{
+    padding: 10px 15px;
+    border-radius: 2px;
+    background-color: white;
+    border: none;
+}
+
+.popover{
+    border: none;
+    border-radius: 2px;
+    padding: 0px 10px;
+    box-shadow: 0px 1px 5px #919191;
+}
+
+.popover-content div{
+    min-width: 150px;
+    padding: 7px 0px;
+}
+
+.popover-content div hr{
+    margin: 5px 0px;
+}
+
+.popover-content a{
+    font-size: 15px;
+    color: #4a4a4a;
+    font-family: Arial,Tahoma,"Bitstream Vera Sans",sans-serif;
+    opacity: .8;
+}
