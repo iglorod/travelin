@@ -29,6 +29,17 @@ class PostController extends Controller
         ];
     }
 
+    public function actions()
+    {
+    return [
+        'image-upload' => [
+            'class' => 'vova07\imperavi\actions\UploadFileAction',
+            'url' => '/frontend/web/uploads/post_images', // Directory URL address, where files are stored.
+            'path' => '@frontend/web/uploads/post_images', // Or absolute path to directory where files are stored.
+        ],
+    ];
+    }
+
     /**
      * Lists all Post models.
      * @return mixed
@@ -70,6 +81,7 @@ class PostController extends Controller
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
+        $this->layout = 'simple';
         return $this->render('create', [
             'model' => $model,
         ]);

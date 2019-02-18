@@ -11,7 +11,7 @@ use yii\bootstrap\NavBar;
         'brandUrl' => Yii::$app->homeUrl,
         'brandLabel' => "Travellln",
         'options' => [
-            'class' => 'navbar-inverse navbar-fixed-top',
+            'class' => 'navbar-inverse ' . $navbar_class . ' navbar-fixed-top',
         ],
     ]);
     $menuItems = [

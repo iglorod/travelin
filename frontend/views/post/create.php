@@ -11,7 +11,8 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="post-create">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <p class='text-center cool-font-title'>Create Post</p>
+    <p class='text-center cool-font-untitle'>Create post and add on the map road of your trip with photos and comments.</p>
 
     <?= $this->render('_form', [
         'model' => $model,

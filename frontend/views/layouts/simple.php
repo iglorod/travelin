@@ -26,28 +26,14 @@ AppAsset::register($this);
 <body>
 <?php $this->beginBody() ?>
 
-<div class="wrap">
+<div class="wrap background-png">
 
-<div id="back-top" class="container">
-<?= $this->render('links', ['navbar_class' => 'navbar-main']) ?>
+<div id="back-top-simple" class="container">
+<?= $this->render('links', ['navbar_class' => 'navbar-simple']) ?>
 <div class="scroll-bar"></div>
-<div class="text-center row middle-cont">
-    <div class="col-12 col-lg-12">
-        <img class="setka-pict" src="/frontend/web/uploads/setka.png" alt="SETKA" width="130">
-    </div>
-    <div class="col-12 col-lg-12">
-        <div class="search-posts">
-            <span class="text-search">Where to?</span>
-            <span class="glyphicon glyphicon-stats span-icon"></span>
-        </div>
-    </div>
-</div>
 </div>
 
-<div class="container">
-    <?= Breadcrumbs::widget([
-        'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-    ]) ?>
+<div class="container-post">
     <?= Alert::widget() ?>
     <?= $content ?>
 </div>

@@ -5,7 +5,7 @@ body {
 }
 
 ::selection {
-    background: #fff2a8; /* Safari */
+    background: #74bfe8; /* Safari */
 }
 
 .wrap {
@@ -124,11 +124,20 @@ a.desc:after {
     outline: none;
 }
 
-.navbar .navbar-brand{
+.navbar-main .navbar-brand{
     background: transparent;
     color: white;
     font-size: 24px;
-    font-family: 'Comfortaa', cursive;
+    font-weight: 400;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.navbar-simple .navbar-brand{
+    background: transparent;
+    color: black;
+    font-size: 24px;
+    font-weight: 300;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 #back-top{
@@ -145,15 +154,35 @@ a.desc:after {
     border-radius: 0px;
 }
 
-.navbar .navbar-nav>li>a{
+.navbar-main .navbar-nav>li>a{
     color: white;
     background-color: transparent;
-    font-family: Trebuchet MS;
+    font-weight: 350;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
-.navbar .navbar-nav>li>a:hover,
-.navbar .navbar-nav>li>a:focus {
+.navbar-simple .navbar-collapse{
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgb(236, 236, 236);
+}
+
+.navbar-simple .navbar-nav>li>a{
+    color: black;
+    background-color: transparent;
+    font-weight: 300;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.navbar-main .navbar-nav>li>a:hover,
+.navbar-main .navbar-nav>li>a:focus {
     color: rgba(255, 255, 255, 1);
+    background-color: rgb(224, 221, 221);
+    transition: all 0.2s;
+}
+
+.navbar-simple .navbar-nav>li>a:hover,
+.navbar-simple .navbar-nav>li>a:focus {
+    color: black;
     background-color: rgb(224, 221, 221);
     transition: all 0.2s;
 }
@@ -201,15 +230,33 @@ a.desc:after {
 .menu-down{
     transition: all .5s;
     background-color: rgb(255, 255, 255);
+    opacity: .985;
+}
+/*
+.menu-down li>a{
+    color: #ffbf38;
 }
 
+.menu-down .navbar-brand{
+    color: #ffbf38;
+}
+
+.menu-down .active>a{
+    color: white;
+    background: #ffbf38;
+}
+
+.menu-down .navbar-toggle{
+    background: #ffbf38;
+}
+*/
 .active-down{
     color: white;
     background-color: rgb(0, 0, 0);
 }
 
 .scroll-bar{
-    background: #ffbf38;
+    background: #ff8155;
     height: 2px;
     width: 0%;
     position: fixed;
@@ -563,4 +610,38 @@ a.desc:after {
     color: #4a4a4a;
     font-family: Arial,Tahoma,"Bitstream Vera Sans",sans-serif;
     opacity: .8;
+}
+
+.background-png{
+    background-image: url("/frontend/web/uploads/back-redact.png");
+    background-size: 1400px auto;
+    background-repeat: no-repeat;
+}
+
+.wrap > .container-post {
+    padding: 50px 10px 30px;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 850px;
+}
+
+.cool-font-title, .cool-font-untitle{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.cool-font-title{
+    font-size: 34px;
+    font-weight: 300;
+}
+
+.cool-font-untitle{
+    font-size: 18px;
+    max-width: 550px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#back-top-simple{
+    width: 100%;
+    transition: all 0.2s;
 }
