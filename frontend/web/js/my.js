@@ -34,7 +34,6 @@
   });
 }*/
 
-
 $('#modal-default').on("keyup","#search_autocomplete_input", function(e){
   if($(this).val().length >= 3){
     $.getJSON('https://maps.googleapis.com/maps/api/place/autocomplete/json?types=(cities)&language=en&key=AIzaSyBB2gXITRe0zhIOQVJ_fyOVMt965cq_gO4', 
@@ -42,6 +41,7 @@ $('#modal-default').on("keyup","#search_autocomplete_input", function(e){
       input: $(this).val()
     },
     function(data) {
+      console.log(data);
       if(Object.values(data)[1] == "OK"){
         var value = Object.values(data)[0];
         var structure = '<div class="searching-city">';
@@ -67,76 +67,13 @@ $('#modal-default').on("keyup","#search_autocomplete_input", function(e){
 
 $(function() {
   if($('nav').length == 0) return;
-  var navPos = $('nav').offset().top + $('nav').height();
-
-  if($('#back-top').length > 0){ var navBackPos = $('#back-top').outerHeight(); var is_orange = true; }
-  if($('#back-top-simple').length > 0){ var navBackPos = $('#back-top-simple').outerHeight(); var is_orange = false; }
-
-  if(navPos > navBackPos){
-    $('.navbar').addClass('menu-down');
-    $('.navbar li>a').css({"color": "#333"});
-    $('.navbar .navbar-brand').css({"color": "#333"});
-    $('.navbar .active>a').css({"background": "#f3f3f3"});
-    $('.navbar .navbar-toggle').css({"background": "#ffbf38"});
-    $('.navbar').css({"box-shadow": "0px 1px 10px #c9c9c9"});
-    if(!is_orange)$('.navbar-simple .navbar-collapse').css({'padding-bottom': '0px', 'border-bottom': 'none'});
-  }
-  else{
-    if(is_orange){
-      $('.navbar').removeClass('menu-down');
-      $(document).width()>767 ? $('.navbar li>a').css({"color": "rgba(255, 255, 255, 1)"}) : $('.navbar li>a').css({"color": "#ffbf38"});
-      $('.navbar .navbar-brand').css({"color": "rgba(255, 255, 255, 1)"});
-      $(document).width()>767 ? $('.navbar .active>a').css({"color": "black", "background": "rgba(255, 255, 255, 1)"}) : $('.navbar .active>a').css({"color": "white", "background": "#ffbf38"})
-      $('.navbar .navbar-toggle').css({"background": "transparent"});
-      $('.navbar').css({"box-shadow": "none"});
-    }else{
-      $('.navbar').removeClass('menu-down');
-      $('.navbar li>a').css({"color": "black"});
-      $('.navbar .navbar-brand').css({"color": "black"});
-      $('.navbar .active>a').css({"color": "black", "background": "rgba(255, 255, 255, 1)"});
-      $('.navbar .navbar-toggle').css({"background": "transparent"});
-      $('.navbar').css({"box-shadow": "none"});
-      $('.navbar-simple .navbar-collapse').css({'padding-bottom': '5px', 'border-bottom': '1px solid rgb(236, 236, 236);'});
-    }
-  }
+  checkingNavBar();
 });
 
 $(window).scroll(function(){
   if($('nav').length == 0) return;
-  var navPos = $('nav').offset().top + $('nav').height();
+  checkingNavBar();
   
-  if($('#back-top').length > 0){ var navBackPos = $('#back-top').outerHeight(); var is_orange = true; }
-  if($('#back-top-simple').length > 0){ var navBackPos = $('#back-top-simple').outerHeight(); var is_orange = false; }
-
-  if(navPos > navBackPos){
-    $('.navbar').addClass('menu-down');
-    $('.navbar li>a').css({"color": "#333"});
-    $('.navbar .navbar-brand').css({"color": "#333"});
-    $('.navbar .active>a').css({"background": "#f3f3f3"});
-    $('.navbar .navbar-toggle').css({"background": "#333"});
-    $('.navbar').css({"box-shadow": "0px 1px 10px #c9c9c9"});
-    if(!is_orange) $('.navbar-simple .navbar-collapse').css({'padding-bottom': '0px', 'border-bottom': 'none'});
-  }
-  else{
-    if(is_orange){
-      $('.navbar').removeClass('menu-down');
-      $(document).width()>767 ? $('.navbar li>a').css({"color": "rgba(255, 255, 255, 1)"}) : $('.navbar li>a').css({"color": "#ffbf38"});
-      $('.navbar .navbar-brand').css({"color": "rgba(255, 255, 255, 1)"});
-      $(document).width()>767 ? $('.navbar .active>a').css({"color": "black", "background": "rgba(255, 255, 255, 1)"}) : $('.navbar .active>a').css({"color": "white", "background": "#ffbf38"})
-      $('.navbar .navbar-toggle').css({"background": "transparent"});
-      $('.navbar').css({"box-shadow": "none"});
-    }else{
-      $('.navbar').removeClass('menu-down');
-      $('.navbar li>a').css({"color": "black"});
-      $('.navbar .navbar-brand').css({"color": "black"});
-      $('.navbar .active>a').css({"color": "black", "background": "rgba(255, 255, 255, 1)"});
-      $('.navbar .navbar-toggle').css({"background": "transparent"});
-      $('.navbar').css({"box-shadow": "none"});
-      $('.navbar-simple .navbar-collapse').css({'padding-bottom': '5px', 'border-bottom': '1px solid rgb(236, 236, 236);'});
-    }
-  }
-  
-
   var wintop = $(window).scrollTop(), docheight =
   $(document).height(), winheight = $(window).height();
 
@@ -156,7 +93,77 @@ $('#modal-default').on('hidden.bs.modal', function (e) {
   $('.cookie-city').show();
 })
 
+$('#click-span').click(function(){
+  if($('#post-id_place').val() == "" || typeof autocomplete.getPlace() === 'undefined') { 
+    alert("Please set location of your trip. Start to type some text..."); 
+    return; 
+  }
+  $('.city-post-create').css({'visibility':'hidden', 'margin-top': '-200px', 'opacity': '0'});
+
+  $('.post-create').css({'visibility':'visible', 'position':'inherit', 'opacity':'1'});
+  $('.redactor-toolbar').css({'display':'inherit'});
+})
+
+$('#click-span-back').click(function(){
+  $('.city-post-create').css({'visibility':'visible', 'margin-top': '0px', 'opacity': '1'});
+
+  $('.post-create').css({'visibility':'hidden', 'opacity':'0'});
+  $('.redactor-toolbar').css({'display':'none'});
+  setTimeout(function(){
+    $('.post-create').css({'position':'absolute'});
+ },500);
+})
+
+$('.btn-create-post').click(function(){
+  $('#post-id_place').val(autocomplete.getPlace()['place_id']);
+})
+
 $(function () {
   $('[data-toggle="popover"]').popover({html:true, trigger: 'focus'})
 })
 
+checkingNavBar = function(){
+  var navPos = $('nav').offset().top + $('nav').height();
+  
+  if($('#back-top').length > 0){ var navBackPos = $('#back-top').outerHeight(); var is_orange = true; }
+  if($('#back-top-simple').length > 0){ var navBackPos = $('#back-top-simple').outerHeight(); var is_orange = false; }
+
+
+  if(navPos > navBackPos){
+    $('.navbar').addClass('menu-down');
+    $('.navbar li>a').css({"color": "#333"});
+    if(is_orange) $('.navbar .navbar-brand').css({"color": "#333", "font-weight": "300"});
+    $('.navbar .active>a').css({"background": "#f3f3f3"});
+    if(is_orange) $('.navbar .navbar-toggle').css({"background": "#333"});
+    $('.navbar').css({"box-shadow": "0px 1px 10px #c9c9c9"});
+    if(!is_orange) $('.navbar-simple .navbar-collapse').css({'padding-bottom': '0px', 'border-bottom': 'none'});
+  }
+  else{
+    if(is_orange){
+      $('.navbar').removeClass('menu-down');
+      $(document).width()>767 ? $('.navbar li>a').css({"color": "rgba(255, 255, 255, 1)"}) : $('.navbar li>a').css({"color": "#ffbf38"});
+      $('.navbar .navbar-brand').css({"color": "rgba(255, 255, 255, 1)", "font-weight": "400"});
+      $(document).width()>767 ? $('.navbar .active>a').css({"color": "black", "background": "rgba(255, 255, 255, 1)"}) : $('.navbar .active>a').css({"color": "white", "background": "#ffbf38"})
+      $('.navbar .navbar-toggle').css({"background": "transparent"});
+      $('.navbar').css({"box-shadow": "none"});
+    }else{
+      $('.navbar').removeClass('menu-down');
+      $('.navbar li>a').css({"color": "black"});
+      $('.navbar .navbar-brand').css({"color": "black"});
+      $('.navbar .active>a').css({"color": "black", "background": "rgba(255, 255, 255, 1)"});
+      $('.navbar .navbar-toggle').css({"background": "transparent"});
+      $('.navbar').css({"box-shadow": "none"});
+      $('.navbar-simple .navbar-collapse').css({'padding-bottom': '5px', 'border-bottom': '1px solid rgb(236, 236, 236);'});
+    }
+  }
+
+  if(!is_orange){
+    var plug_top = $('.post-form').offset().top;
+    if(navPos >= plug_top){
+      $('.redactor-toolbar').css({'transition': 'all .5s'});
+      $('.redactor-toolbar').css({'padding-top': '60px'});
+    }else{
+      $('.redactor-toolbar').css({'padding-top': '18px'});
+    }
+  }
+}

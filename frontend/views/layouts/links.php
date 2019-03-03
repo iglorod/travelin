@@ -31,6 +31,7 @@ use yii\bootstrap\NavBar;
             . 'data-content="'
             . '<div><a href=' .  Url::to(["/site/profile"]) . ' data-method=' . 'post' . '>Show profile</a></div>'
             . '<div><hr></div>'
+            . '<div><a href=' .  Url::to(["/post/create"]) . ' data-method=' . 'post' . '>Create post</a></div>'
             . '<div><a href=' .  Url::to(["/site/logout"]) . ' data-method=' . 'post' . '>Sign out</a></div>'
             . '">'
             . '<span class="glyphicon glyphicon-user"></span>'

@@ -8,6 +8,7 @@ use Yii;
  * This is the model class for table "post".
  *
  * @property int $id
+ * @property string $id_place
  * @property string $text
  */
 class Post extends \yii\db\ActiveRecord
@@ -26,8 +27,9 @@ class Post extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['text'], 'required'],
+            [['id_place', 'text'], 'required'],
             [['text'], 'string'],
+            [['id_place'], 'string', 'max' => 100],
         ];
     }
 
@@ -38,6 +40,7 @@ class Post extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
+            'id_place' => 'Place',
             'text' => 'Text',
         ];
     }
