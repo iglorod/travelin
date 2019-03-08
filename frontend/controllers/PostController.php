@@ -5,10 +5,15 @@ namespace frontend\controllers;
 use Yii;
 use frontend\models\Post;
 use frontend\models\PostSearch;
+use frontend\models\ImageUpload;
+use frontend\models\Pathway;
+use frontend\models\Imageway;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use yii\web\UploadedFile;
+
 
 /**
  * PostController implements the CRUD actions for Post model.
@@ -48,7 +53,7 @@ class PostController extends Controller
             'class' => 'vova07\imperavi\actions\UploadFileAction',
             'url' => '/frontend/web/uploads/post_images', // Directory URL address, where files are stored.
             'path' => '@frontend/web/uploads/post_images', // Or absolute path to directory where files are stored.
-        ],
+        ]
     ];
     }
 
@@ -88,19 +93,28 @@ class PostController extends Controller
     public function actionCreate()
     {
         $model = new Post();
+        $model2 = new ImageUpload();
 
         if ($model->load(Yii::$app->request->post())) {
             $model->id_author = Yii::$app->user->id;
-
-            echo var_dump($model);
-            return;
+            $model->created_at = strtotime(date('Y-m-d H:i:s'));
+            $model->updated_at = strtotime(date('Y-m-d H:i:s'));
+    
+            
             if($model->save())
             return $this->redirect(['view', 'id' => $model->id]);
+        }
+
+        if ($model2->load(Yii::$app->request->post())) {
+            $file = UploadedFile::getInstance($model2, 'image');
+            $image_name = $model2->uploadFile($file, 'image.jpg');
+            echo "data";
         }
 
         $this->layout = 'simple';
         return $this->render('create', [
             'model' => $model,
+            'model2'=>$model2,
         ]);
     }
 

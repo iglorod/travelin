@@ -87,6 +87,10 @@ $('.search-posts').click(function(){
   $('#modal-default').modal('show');
 });
 
+$('.btn-create-post').click(function(){
+  //$('#post-id_place').val(autocomplete.getPlace()['place_id']);
+})
+
 $('#modal-default').on('hidden.bs.modal', function (e) {
   $('.search-place-input').val("");
   $('.searching-city').remove();
@@ -114,8 +118,29 @@ $('#click-span-back').click(function(){
  },500);
 })
 
-$('.btn-create-post').click(function(){
-  $('#post-id_place').val(autocomplete.getPlace()['place_id']);
+$('#click-span-travel').click(function(){
+  $('.post-create').css({'visibility':'hidden', 'margin-top': '-200px', 'opacity': '0'});
+
+  setTimeout(function(){
+    $('.post-create').css({'position':'absolute'});
+ },500);
+
+  $('.post-map-create').css({'visibility':'visible', 'position':'relative', 'opacity':'1', 'margin-top': '0px' });
+  $('#map-create').css({'visibility':'visible', 'position':'relative', 'opacity':'1', 'height': '400px' });
+  $('.click-span-travel-back-div').css({'visibility':'visible', 'position':'inherit', 'opacity':'1'});
+  $('.redactor-toolbar').css({'display':'none'});
+  $('#changer-city-text').html(autocomplete.getPlace()['vicinity']);
+
+  initMapCreate();
+})
+
+$('#click-span-travel-back').click(function(){
+  $('.post-create').css({'visibility':'visible', 'margin-top': '0px', 'opacity': '1', 'position': 'inherit'});
+
+  $('.post-map-create').css({'visibility':'hidden', 'position':'absolute', 'opacity':'0', 'margin-top': '200px' });
+  $('#map-create').css({'visibility':'hidden', 'position':'absolute', 'opacity':'0', 'height': '0px'});
+  $('.click-span-travel-back-div').css({'visibility':'hidden', 'position':'absolute', 'opacity':'0'});
+  $('.redactor-toolbar').css({'display':'inherit'});
 })
 
 $(function () {
@@ -167,3 +192,79 @@ checkingNavBar = function(){
     }
   }
 }
+
+$('#button-add-path').click(function(){
+  $(this).toggleClass("pushed-button-add-path");
+  $(this).toggleClass("unpushed-button-add-path");
+
+  if($('.unpushed-button-add-path').length > 0){
+    $('.gm-svpc').css({'opacity': '1'});
+  }
+  else{
+    $('.gm-svpc').css({'opacity': '0'});
+  }
+})
+
+addInfo = function(){
+  
+}
+
+getPos = function(id){
+  alert(id);
+}
+
+$('#slide-upload-image').click(function(){
+  $('.js-file-upload').click();
+})
+/*
+$("#uploadButton").on("click", function(){
+    var fd = new FormData();
+    var file = $(".js-file-upload")[0].files[0];
+    fd.append('files', file);
+
+  $.ajax({
+      type: "POST",
+      url: 'index.php?r=post/add-image',
+      type: 'POST',
+      data: fd,
+      cache: false,
+      contentType: false,
+      processData: false,
+      success: function (data) {
+          //show content
+          console.log(data);
+      }
+  });
+
+})*/
+
+$(".js-file-upload").on("change", function(e){
+  
+  $(".btn-upload-image").click();
+/*
+  $.ajax({
+    url: 'index.php?r=post/create',
+    method: 'POST',
+    dataType: 'json',
+    contentType: 'application/json; charset=utf-8',
+    success: function(data) {
+        alert(data);
+    },
+    fail: function(jqXHR, textStatus) {
+        alert("Request failed: " + textStatus);
+    }
+});*/
+})
+
+$('.btn-upload-image').on('click', function () {
+  $.ajax({
+    url: 'index.php?r=post/create',
+    method: 'POST',
+    success: function(data) {
+        alert(data);
+    },
+    fail: function(jqXHR, textStatus) {
+        alert("Request failed: " + textStatus);
+    }
+  });
+})

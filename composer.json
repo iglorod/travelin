@@ -32,10 +32,7 @@
         "process-timeout": 1800,
         "fxp-asset": {
             "enabled": false
-        },
-         "github-oauth": {
-      		"github.com": "fc22be65f7f90378a97e91b9e3eadc0de00cafc1"
-      	}
+        }
     },
     "repositories": [
         {

@@ -603,6 +603,7 @@ a.desc:after {
     border-radius: 2px;
     background-color: white;
     border: none;
+    cursor: url("https://maps.gstatic.com/mapfiles/openhand_8_8.cur"), default;
 }
 
 .popover{
@@ -622,11 +623,12 @@ a.desc:after {
 }
 
 .popover-content a{
-    font-size: 15px;
+    font-size: 14px;
     color: #4a4a4a;
-    font-family: Arial,Tahoma,"Bitstream Vera Sans",sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     opacity: .8;
     text-decoration: none;
+    cursor: url("https://maps.gstatic.com/mapfiles/openhand_8_8.cur"), default;
 }
 
 .background-png{
@@ -664,6 +666,7 @@ a.desc:after {
 }
 
 .create-combo-input{
+    box-shadow: 0 20px 60px rgba(86,74,64,.25) !important;
     height: 3.5em;
     font-size: 18px;
     font-weight: 200;
@@ -688,7 +691,7 @@ a.desc:after {
     display: none;
 }
 
-#click-span, #click-span-back{
+#click-span, #click-span-back, #click-span-travel-back{
     background: #ffb595;
     padding: 10px 15px;
     border-radius: 3px;
@@ -699,9 +702,31 @@ a.desc:after {
     transition: all .2s;
 }
 
-#click-span:hover, #click-span-back:hover{
-    background: #ffdd6e;
+#click-span:hover, #click-span-back:hover, #click-span-travel-back:hover{
+    background: #ffd04e;
     color: #333;
+}
+
+.click-span-travel-back-div{
+    position: absolute;
+    visibility: hidden;
+    opacity: 0;
+    margin-top: 20px;
+}
+
+#click-span-travel{
+    background: #74bfe8;
+    padding: 10px 15px;
+    border-radius: 3px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: 400;
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+    transition: all .2s;
+}
+
+#click-span-travel:hover{
+    background: #61b7e6;
 }
 
 .pac-container{
@@ -727,4 +752,137 @@ a.desc:after {
 
 .pac-icon{
     display: none;
+}
+
+.btn-create-post{
+    background: #eb72b5;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 3px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: 400;
+    height: 39px;
+    margin-bottom: 2.8px;
+    transition: all .2s;
+}
+
+.btn-create-post:hover, .btn-create-post:focus{
+    background: #ec56a9;
+}
+
+#map-create{
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 850px;
+    position: absolute;
+    visibility: hidden;
+    opacity: 0;
+    transition: all .5s;
+    box-shadow: 0 20px 60px rgba(86,74,64,.25);
+    border-radius: 10px;
+}
+
+.post-map-create{
+    position: absolute;
+    visibility: hidden;
+    opacity: 0;
+    margin-top: 200px;
+}
+
+#button-add-path{
+    height: 40px;
+    width: 40px;
+    position: absolute;
+    border-radius: 2px;
+    cursor: url("https://maps.gstatic.com/mapfiles/openhand_8_8.cur"), default;
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+    z-index: 99999;
+    right: 0;
+    margin: 10px;
+    font-size: 25px;
+    padding: 7px;
+    top: 250px;
+    transition: all .5s;
+}
+
+.unpushed-button-add-path{
+    color: #666666;
+    background: none rgb(255, 255, 255);
+}
+
+.unpushed-button-add-path:hover{
+    color: #333;
+}
+
+.pushed-button-add-path{
+    background: none rgb(123, 213, 255);
+    color: white;
+}
+
+.pushed-button-add-path:hover{
+    color: rgb(236, 236, 236);/*
+    background: none #982dfc;*/
+}
+
+.slide-images-style{
+    max-height: 350px;
+    min-height: 350px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.carousel{
+    background: #333;
+    border-radius: 10px;
+}
+
+.carousel-control{
+    border-radius: 10px;
+    width: 10%;
+}
+
+.carousel-indicators{
+    bottom: 0px;
+}
+
+#slide-upload-image{
+    height: 60px;
+    width: 100%;
+    top: 0px;
+    text-align: center;
+    z-index: 999;
+    position: absolute;
+    border-radius: 10px;
+    opacity: 0;
+    transition: all .5s;
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.0001) 0%, rgba(0, 0, 0, 0.5) 100%);
+    cursor: pointer;
+}
+
+#slide-upload-image > ion-icon{
+    font-size: 32px;
+    z-index: 9999;
+    margin-top: 25px;
+    color: rgb(228, 228, 228);
+}
+
+#slide-upload-image:hover{
+    opacity: 1;
+}
+
+.slide-show{
+    position: relative;
+    margin-top: 50px;
+}
+
+.cool-input-for-slide{
+    background: transparent;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    outline: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 24px;
+    font-weight: 200;
+    text-align: center;
 }
