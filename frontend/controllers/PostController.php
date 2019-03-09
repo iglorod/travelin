@@ -20,6 +20,9 @@ use yii\web\UploadedFile;
  */
 class PostController extends Controller
 {
+
+    public $model2;
+
     /**
      * {@inheritdoc}
      */
@@ -105,10 +108,11 @@ class PostController extends Controller
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
-        if ($model2->load(Yii::$app->request->post())) {
-            $file = UploadedFile::getInstance($model2, 'image');
-            $image_name = $model2->uploadFile($file, 'image.jpg');
-            echo "data";
+        if(Yii::$app->request->isAjax){
+           $model2->image = $_FILES['image'];
+           $image_name = $model2->uploadFile('image.jpg');
+           echo $image_name;
+           die();
         }
 
         $this->layout = 'simple';
@@ -116,6 +120,14 @@ class PostController extends Controller
             'model' => $model,
             'model2'=>$model2,
         ]);
+    }
+
+    public function actionGetImg(){
+        $model2->load(Yii::$app->request->post());
+        /*$file = UploadedFile::getInstance($model2, 'image');
+        $image_name = $model2->uploadFile($file, 'image.jpg');*/
+        echo $file;
+        die();
     }
 
     /**

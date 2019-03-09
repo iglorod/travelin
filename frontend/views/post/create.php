@@ -61,17 +61,15 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 <?php ActiveForm::end(); ?>
 
-
-<?php $form1 = ActiveForm::begin(); ?>
+<?php $form1 = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
 
 <?= $form1->field($model2, 'image')->fileInput(['maxlength' => true, 'class'=>'js-file-upload', 'style' => 'display: none;'])->label(false) ?>
-<?= $form1->field($model2, 'marker_id')->textInput(['class' => 'form-control'])->label(false) ?>
-<?= $form1->field($model2, 'image_id')->textInput(['class' => 'form-control'])->label(false) ?>
+<?= $form1->field($model2, 'marker_id')->textInput(['class' => 'form-control', 'style' => 'display: none;'])->label(false) ?>
+<?= $form1->field($model2, 'image_id')->textInput(['class' => 'form-control', 'style' => 'display: none;'])->label(false) ?>
 
-<?= Html::submitButton('Upload', ['class' => 'btn btn-upload-image']) ?>
+<?= Html::submitButton('Upload', ['class' => 'btn btn-upload-image', 'style' => 'display: none;']) ?>
 
 <?php ActiveForm::end(); ?>
-
 
 <div class="post-map-create">
   <p id="changer-city-text" class='text-center cool-font-title'>Create Path</p>
@@ -81,26 +79,18 @@ $this->params['breadcrumbs'][] = $this->title;
   <div id="map-create"></div>
   <div class="click-span-travel-back-div">
     <span id="click-span-travel-back">Turn Back</span>
+    <span id="click-span-travel-add-photos">Add Photos</span>
+    <span id="click-span-travel-add-descript">Add Description</span>
   </div>
 </div>
 
 <?php
 $carousel = [
  [
- 'content' => '<img class="slide-images-style" src="https://cdn.pixabay.com/photo/2016/12/01/19/44/gangster-1876017__340.jpg"/>',
- 'caption' => '<input type="text" class="cool-input-for-slide" maxlength="22">',
+ 'content' => '<img class="slide-images-style" src="uploads/travel_profile.jpg"/>',
+ 'caption' => '<input type="text" class="cool-input-for-slide" maxlength="40">',
  'options' => []
  ],
- [
- 'content' => '<img class="slide-images-style" src="http://static-29.sinclairstoryline.com/resources/media/3adcd899-09c9-468a-a11e-9ad839192359-large16x9_1280x720_81012B00VMPWE.jpg?1540999477954"/>',
- 'caption' => '',
- 'options' => []
- ],
- [
- 'content' => '<img class="slide-images-style" src="http://images4.fanpop.com/image/photos/17500000/cool-background-random-17506456-1869-1168.jpg"/>',
- 'caption' => '',
- 'options' => ['class' => 'my-class']
- ]
 ];
 ?>
 
@@ -119,7 +109,12 @@ $carousel = [
 </div>
 
 <script>
+  var map;
   var autocomplete;
+  var allMarkers = [];
+  var flightPathArray= [];
+  var flightPlanCoordinates = [];
+
 function activeSearch(){
   document.getElementById
   var input = document.getElementById('post-id_place');
@@ -132,14 +127,12 @@ function initialize() {
 }
 
 function initMapCreate() {
-  var map = new google.maps.Map(document.getElementById('map-create'), {
+  map = new google.maps.Map(document.getElementById('map-create'), {
     zoom: 8,
     center: {lat: 40.72, lng: -73.96}
   });
   var geocoder = new google.maps.Geocoder;
   var infowindow = new google.maps.InfoWindow;
-
-  var flightPlanCoordinates = [];
 
   geocodePlaceId(geocoder, map, infowindow);
 
@@ -148,16 +141,15 @@ function initMapCreate() {
   map.addListener('click', function(e) {
     var button = document.getElementById('button-add-path');
     if(button.className == "pushed-button-add-path"){
-        placeMarkerAndPanTo(e.latLng, map, id_marker_start);
+        placeMarkerAndPanTo(e.latLng, map, id_marker_start, allMarkers);
         id_marker_start++;
         flightPlanCoordinates.push(e.latLng);
         if(flightPlanCoordinates.length > 1) buildRoad(flightPlanCoordinates, map);
-        addInfo();
     }
   });
 }
 
-function placeMarkerAndPanTo(latLng, map, id_marker) {
+function placeMarkerAndPanTo(latLng, map, id_marker, allMarkers) {
         var marker = new google.maps.Marker({
           position: latLng,
           map: map,
@@ -165,10 +157,17 @@ function placeMarkerAndPanTo(latLng, map, id_marker) {
           id: id_marker
         });
         map.panTo(latLng);
+        allMarkers.push(marker);
 
         marker.addListener('click', function() {
+          loadPrevMarker(map, allMarkers);
           loadResource(marker.id);
+          loadCurrMarker(map, marker);
         });
+
+        loadPrevMarker(map, allMarkers);
+        createMarkerObj(id_marker);
+        loadCurrMarker(map, marker);
       }
 
 // This function is called when the user clicks the UI button requesting
@@ -214,6 +213,8 @@ function buildRoad(values, map){
           strokeOpacity: 1.0,
           strokeWeight: 2
         });
+
+        flightPathArray.push(flightPath);
 
         flightPath.setMap(map);
 }
