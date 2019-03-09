@@ -54,7 +54,6 @@ Marker_obj.prototype.addImageText = function(image_name, text) {
 var markerObjects = []
 
 var current_marker_id;
-var prev_marker_id;
 
 $('#modal-default').on("keyup","#search_autocomplete_input", function(e){
   if($(this).val().length >= 3){
@@ -120,8 +119,12 @@ $('#modal-default').on('hidden.bs.modal', function (e) {
 })
 
 $('#click-span').click(function(){
-  if($('#post-id_place').val() == "" || typeof autocomplete.getPlace() === 'undefined') { 
-    alert("Please set location of your trip. Start to type some text..."); 
+  if($('#post-id_place').val() == "" || typeof autocomplete.getPlace() === 'undefined') {
+    Swal.fire(
+      'Place Name',
+      'Please set location of your trip. Start to type some text...',
+      'info'
+    )
     return; 
   }
   $('.city-post-create').css({'visibility':'hidden', 'margin-top': '-200px', 'opacity': '0'});
@@ -153,7 +156,7 @@ $('#click-span-travel').click(function(){
   $('.redactor-toolbar').css({'display':'none'});
   $('#changer-city-text').html(autocomplete.getPlace()['vicinity']);
 
-  initMapCreate();
+  if(mapIsCreated == 0) initMapCreate();
 })
 
 $('#click-span-travel-back').click(function(){
@@ -235,6 +238,15 @@ loadResource = function(id){
 }
 
 $('#slide-upload-image').click(function(){
+  if(markerObjects[current_marker_id].image.length >= 5){
+    Swal.fire(
+      'Uploading Photos',
+      'Restriction on loading pictures. Allowed to upload not more than 5 images on one marker.',
+      'info'
+    )
+    return;
+  }
+
   $('.js-file-upload').click();
 })
 
@@ -250,12 +262,18 @@ $('#w1').on('beforeSubmit', function(){
   
   var my_arr = $('.js-file-upload')[0].files[0]['name'].split(".");
   if(my_arr[1] != 'png' && my_arr[1] != 'jpeg' && my_arr[1] != 'jpg') {
-    alert("Available formats are '.png' '.jpg' or '.jpeg'");
+    Swal.fire(
+      'Pictures Format',
+      "Available formats are '.png' '.jpg' or '.jpeg'",
+      'info'
+    )
+    refreshImageUploader();
     return false;
   }
   
   var formData = new FormData();
   formData.append('image', $('.js-file-upload')[0].files[0]);
+  formData.append('action', 'upload');
 
     $.ajax({
         url: 'index.php?r=post/create',
@@ -263,6 +281,7 @@ $('#w1').on('beforeSubmit', function(){
         data: formData,
         success: function(res){
           markerObjects[current_marker_id].addImage(res);
+          refreshImageUploader();
           refreshImagesSlideShow();
         },
         error: function(){
@@ -274,6 +293,10 @@ $('#w1').on('beforeSubmit', function(){
     });
     return false;
 });
+
+refreshImageUploader = function(){
+  $('.js-file-upload').val("");
+}
 
 refreshImagesSlideShow = function(){
   if(typeof markerObjects[current_marker_id].image == 'undefined') {
@@ -320,22 +343,48 @@ createMarkerObj = function(id){
   markerObjects[id] = new Marker_obj();
   current_marker_id = id;
 
-  hideSlideShow()
+  refreshImagesSlideShow()
 }
 
 $("#click-span-travel-add-photos").on("click", function(){
   if(typeof current_marker_id == 'undefined') {
-    alert('Please, add or check the marker for inserting photo...');
+    Swal.fire({
+      title: 'Please, add or check the marker for inserting photo...',
+      animation: false,
+      customClass: 'animated tada'
+    })
     return;
   }
 
-  refreshImagesSlideShow();
-
-  $('.slide-show').css({'position': 'relative', 'visibility': 'visible', 'height': '350px', 'opacity': '1'});
-  $('.carousel').css({'position': 'relative', 'visibility': 'visible', 'height': '350px', 'opacity': '1'});  
+  if($(this).text() == "Add Photos"){
+    refreshImagesSlideShow();
+    showSlideShow();
+    scrollToSlideShow();
+    $(this).text("Remove All Photos");
+  }else if($(this).text() == "Remove All Photos"){
+    checkIfUserIsShure();
+  }
 })
 
+$('#click-span-travel-scroll-to-photos').click(function(){
+  scrollToSlideShow();
+})
+
+scrollToSlideShow = function(){
+  $('html,body').animate({
+    scrollTop: $("#scroll-to-div").offset().top + $("#scroll-to-div").outerHeight(true) - 30
+}, 'slow');
+}
+
+showSlideShow = function(){
+  $('#click-span-travel-scroll-to-photos').css({"visibility": "visible"});
+  $('.slide-show').css({'position': 'relative', 'visibility': 'visible', 'height': '350px', 'opacity': '1'});
+  $('.carousel').css({'position': 'relative', 'visibility': 'visible', 'height': '350px', 'opacity': '1'});  
+}
+
 hideSlideShow = function(){ 
+  $('#click-span-travel-scroll-to-photos').css({"visibility": "hidden"});
+  $("#click-span-travel-add-photos").text("Add Photos");
   $('.slide-show').css({'position': 'absolute', 'visibility': 'hidden', 'height': '0px', 'opacity': '0'});
   $('.carousel').css({'position': 'absolute', 'visibility': 'hidden', 'height': '0px', 'opacity': '0'});
 }
@@ -363,6 +412,15 @@ loadCurrMarker = function(map, marker){
   loadInfoWindow(map, marker);
 }
 
+standartizeAllMarkers = function(){
+  $.each(allMarkers, function( index, marker ) {
+    marker.setIcon("http://maps.google.com/mapfiles/ms/icons/purple-dot.png");
+    hideInfoWindow(map, marker)
+    return;
+  });
+  current_marker_id = undefined;
+}
+
 loadInfoWindow = function(map, marker){
   var titleText;  //before we add some text to info-window
   var mainText;
@@ -385,15 +443,23 @@ hideInfoWindow = function(map, marker){
 };
 
 removeMarker = function(){
+  Swal.fire({
+    type: 'success',
+    title: 'Marker information and photos has been deleted.',
+    showConfirmButton: false,
+    timer: 2000
+  })
+
   var marker_id = $('#remove-marker-icon').attr('mark');
   var lat = allMarkers[marker_id].position.lat();
   var lng = allMarkers[marker_id].position.lng(); 
   allMarkers[marker_id].setMap(null);
+  removeMarkerData(marker_id);
   deletePolilines();
-  console.log('Need:' + lat);
-  console.log('Polil:' + flightPlanCoordinates);
   deletePlanCoordinates(lat, lng);
   buildRoad(flightPlanCoordinates, map);
+  hideSlideShow();
+  current_marker_id = undefined;
 }
 
 deletePlanCoordinates = function(lat, lng){
@@ -413,3 +479,86 @@ deletePolilines = function(){
     value.setMap(null);
   });
 }
+
+removeAllMarkersData = function(){
+  var imageDeleteList = [];
+  $.each(markerObjects, function( index, value ) {
+    $.each(value.image, function( index, image ) {
+      imageDeleteList.push(image);
+    });
+    value.image = [];
+    value.text = [];
+    value.mainText = "";
+    value.mainTitle = "";
+  });
+
+  imageDeleteList = JSON.stringify(imageDeleteList);
+  
+  var data = {
+    'image_list': imageDeleteList,
+    'action': "delete"
+  }
+
+    $.ajax({
+        url: 'index.php?r=post/create',
+        type: 'POST',
+        data: data,
+        success: function(res){
+          standartizeAllMarkers();
+        },
+        error: function(){
+            alert('Error!');
+        }
+    });
+}
+
+removeMarkerData = function(id){
+  var imageDeleteList = [];
+  $.each(markerObjects[id].image, function( index, image ) {
+    imageDeleteList.push(image);
+  });
+  markerObjects[id].image = [];
+  markerObjects[id].text = [];
+  markerObjects[id].mainText = "";
+  markerObjects[id].mainTitle = "";
+
+  imageDeleteList = JSON.stringify(imageDeleteList);
+  
+  var data = {
+    'image_list': imageDeleteList,
+    'action': "delete"
+  }
+    $.ajax({
+        url: 'index.php?r=post/create',
+        type: 'POST',
+        data: data,
+        success: function(res){
+        },
+        error: function(){
+            alert('Error!');
+        }
+    });
+}
+
+checkIfUserIsShure = function(){
+  Swal.fire({
+    title: 'Are you sure?',
+    text: 'You will not be able to recover this imaginary file!',
+    type: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, delete it!',
+    cancelButtonText: 'No, keep it'
+  }).then((result) => {
+    if (result.value) {
+      removeAllMarkersData();
+      hideSlideShow();
+      Swal.fire(
+        'Deleted!',
+        'Your imaginary file has been deleted.',
+        'success'
+      )
+    // For more information about handling dismissals please visit
+    // https://sweetalert2.github.io/#handling-dismissals
+    }
+  })
+};

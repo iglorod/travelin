@@ -64,14 +64,12 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php $form1 = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
 
 <?= $form1->field($model2, 'image')->fileInput(['maxlength' => true, 'class'=>'js-file-upload', 'style' => 'display: none;'])->label(false) ?>
-<?= $form1->field($model2, 'marker_id')->textInput(['class' => 'form-control', 'style' => 'display: none;'])->label(false) ?>
-<?= $form1->field($model2, 'image_id')->textInput(['class' => 'form-control', 'style' => 'display: none;'])->label(false) ?>
 
 <?= Html::submitButton('Upload', ['class' => 'btn btn-upload-image', 'style' => 'display: none;']) ?>
 
 <?php ActiveForm::end(); ?>
 
-<div class="post-map-create">
+<div id="scroll-to-div" class="post-map-create">
   <p id="changer-city-text" class='text-center cool-font-title'>Create Path</p>
   <p class='text-center cool-font-untitle'>Start building your travel path and add your photos to them.</p>
 
@@ -81,6 +79,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <span id="click-span-travel-back">Turn Back</span>
     <span id="click-span-travel-add-photos">Add Photos</span>
     <span id="click-span-travel-add-descript">Add Description</span>
+    <span id="click-span-travel-scroll-to-photos"><ion-icon name="arrow-round-down"></ion-icon></span>
   </div>
 </div>
 
@@ -110,7 +109,9 @@ $carousel = [
 
 <script>
   var map;
+  var intervalId;
   var autocomplete;
+  var mapIsCreated = 0;
   var allMarkers = [];
   var flightPathArray= [];
   var flightPlanCoordinates = [];
@@ -133,6 +134,7 @@ function initMapCreate() {
   });
   var geocoder = new google.maps.Geocoder;
   var infowindow = new google.maps.InfoWindow;
+  mapIsCreated = 1;
 
   geocodePlaceId(geocoder, map, infowindow);
 
@@ -181,12 +183,6 @@ function geocodePlaceId(geocoder, map, infowindow) {
       if (results[0]) {
         map.setZoom(12);
         map.setCenter(results[0].geometry.location);
-       /* var marker = new google.maps.Marker({
-          map: map,
-          position: results[0].geometry.location
-        });
-        infowindow.setContent(results[0].formatted_address);
-        infowindow.open(map, marker);*/
       } else {
         window.alert('No results found');
       }
@@ -199,7 +195,7 @@ function geocodePlaceId(geocoder, map, infowindow) {
 function buildRoad(values, map){
 
   var lineSymbol = {
-  path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
+    path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
 };
 
   var flightPath = new google.maps.Polyline({
@@ -217,6 +213,20 @@ function buildRoad(values, map){
         flightPathArray.push(flightPath);
 
         flightPath.setMap(map);
+
+        window.clearInterval(intervalId);
+        animateCircle(flightPath);
+}
+
+function animateCircle(line) {
+          var count = 0;
+          intervalId = window.setInterval(function() {
+            count = (count + 1) % 200;
+
+            var icons = line.get('icons');
+            icons[0].offset = (count / 2) + '%';
+            line.set('icons', icons);
+        }, 20);
 }
 
 </script>

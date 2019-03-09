@@ -13,10 +13,12 @@ class AppAsset extends AssetBundle
     public $baseUrl = '@web';
     public $css = [
         'css/site.css',
-        'https://fonts.googleapis.com/css?family=Roboto'
+        'css/sweetalert2.min.css',
+        'https://fonts.googleapis.com/css?family=Roboto',
     ];
     public $js = [
         'js/my.js',
+        'js/sweetalert2.min.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',

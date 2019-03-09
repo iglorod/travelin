@@ -109,10 +109,18 @@ class PostController extends Controller
         }
 
         if(Yii::$app->request->isAjax){
-           $model2->image = $_FILES['image'];
-           $image_name = $model2->uploadFile('image.jpg');
-           echo $image_name;
-           die();
+            $action = $_POST['action'];
+            
+            if($action == "upload"){
+                $model2->image = $_FILES['image'];
+                $image_name = $model2->uploadFile('image.jpg');
+                echo $image_name;
+                die();
+            }else if($action == "delete"){
+                $deleteList = json_decode(stripslashes($_POST['image_list']));
+                $model2->deleteOldFiles($deleteList);
+                die();
+            }
         }
 
         $this->layout = 'simple';
@@ -120,14 +128,6 @@ class PostController extends Controller
             'model' => $model,
             'model2'=>$model2,
         ]);
-    }
-
-    public function actionGetImg(){
-        $model2->load(Yii::$app->request->post());
-        /*$file = UploadedFile::getInstance($model2, 'image');
-        $image_name = $model2->uploadFile($file, 'image.jpg');*/
-        echo $file;
-        die();
     }
 
     /**
