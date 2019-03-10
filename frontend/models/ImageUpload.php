@@ -10,6 +10,7 @@ use yii\web\UploadedFile;
 class ImageUpload extends Model{
 
     public $image;
+    public $image_name;
 
     public function rules(){
         return [
@@ -22,7 +23,20 @@ class ImageUpload extends Model{
                 unlink(Yii::getAlias('@frontend') . '/web/uploads/marker_images/' . $currentImage);
             }
 
-            $info = pathinfo($_FILES['userFile']['name']);
+            $image_array_1 = explode(";", $this->image);
+            $image_array_2 = explode(",", $image_array_1[1]);
+            $data = base64_decode($image_array_2[1]);
+
+            $expl = explode(".", $this->image_name);
+            $baseName = $expl[0];
+
+            $filename = strtolower(md5(uniqid($baseName)) . '.png');
+            $target = Yii::getAlias('@frontend') . '/web/uploads/marker_images/' . $filename;
+            file_put_contents($target, $data);
+
+            return $filename;
+
+     /*       $info = pathinfo($_FILES['userFile']['name']);
             $name = $this->image['name'];
             $expl = explode(".", $name);
             $baseName = $expl[0];
@@ -32,7 +46,7 @@ class ImageUpload extends Model{
 
             $target = Yii::getAlias('@frontend') . '/web/uploads/marker_images/' . $filename;
             move_uploaded_file( $this->image['tmp_name'], $target);
-            return $filename;
+            return $filename;*/
     }
 
     public function deleteOldFiles($fileList){

@@ -888,7 +888,7 @@ a.desc:after {
 }
 
 #slide-upload-image{
-    height: 60px;
+    height: 70px;
     width: 100%;
     top: 0px;
     text-align: center;
@@ -897,19 +897,31 @@ a.desc:after {
     border-radius: 10px;
     opacity: 0;
     transition: all .5s;
-    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.0001) 0%, rgba(0, 0, 0, 0.5) 100%);
-    cursor: pointer;
+    background-image: linear-gradient(to top, rgba(54, 54, 54, 0) 0%, rgba(0, 0, 0, 0.5) 100%);
 }
 
-#slide-upload-image > ion-icon{
+#slide-upload-image ion-icon{
     font-size: 32px;
     z-index: 9999;
-    margin-top: 25px;
+    padding: 18px;
     color: rgb(228, 228, 228);
+    cursor: pointer;
 }
 
 #slide-upload-image:hover{
     opacity: 1;
+}
+
+#slide-upload-image ion-icon:hover{
+    color: rgb(255, 255, 255);
+}
+
+.fl-right{
+    text-align: right;
+}
+
+.fl-left{
+    text-align: left;
 }
 
 .slide-show{
@@ -975,4 +987,36 @@ a.desc:after {
 
 .button-info-window > ion-icon:hover{
     color: rgb(211, 58, 58);
+}
+
+.place-brief-descr{
+    margin-top: 0px;
+    position: absolute;
+    opacity: 0;
+    height: 0px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: 200;
+    visibility: hidden;
+    z-index: 0;
+    transition: all.5s;
+}
+
+#text-decr-input{
+    overflow: hidden;
+    font-size: 16px;
+    padding: 15px;
+    transition: all .5s;
+}
+
+.title-decr-input{
+    height: 54px;
+    font-size: 16px;
+}
+
+#uploadimageModal{
+    z-index: 9999999;
+}
+
+.modal-dialog{
+    width: 700px;
 }

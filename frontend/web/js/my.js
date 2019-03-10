@@ -109,7 +109,7 @@ $('.search-posts').click(function(){
 });
 
 $('.btn-create-post').click(function(){
-  $('#post-id_place').val(autocomplete.getPlace()['place_id']);
+  $('#post-id_place').val(placeId);
 })
 
 $('#modal-default').on('hidden.bs.modal', function (e) {
@@ -126,6 +126,11 @@ $('#click-span').click(function(){
       'info'
     )
     return; 
+  }
+  if(placeId != autocomplete.getPlace()['place_id']) { 
+    mapIsCreated = 0;
+    removeAllMarkersData(0);
+    removeAllMarkersFromMap();
   }
   $('.city-post-create').css({'visibility':'hidden', 'margin-top': '-200px', 'opacity': '0'});
 
@@ -160,6 +165,9 @@ $('#click-span-travel').click(function(){
 })
 
 $('#click-span-travel-back').click(function(){
+  if($('.pushed-button-add-path').length >= 1) $('#button-add-path').click();
+  hideDescription();
+
   $('.post-create').css({'visibility':'visible', 'margin-top': '0px', 'opacity': '1', 'position': 'inherit'});
 
   $('.post-map-create').css({'visibility':'hidden', 'position':'absolute', 'opacity':'0', 'margin-top': '200px' });
@@ -168,6 +176,7 @@ $('#click-span-travel-back').click(function(){
   $('.redactor-toolbar').css({'display':'inherit'});
 
   hideSlideShow();
+  hideDescription();
 })
 
 $(function () {
@@ -235,9 +244,10 @@ $('#button-add-path').click(function(){
 loadResource = function(id){
   current_marker_id = id;
   refreshImagesSlideShow();
+  refreshDescription();
 }
 
-$('#slide-upload-image').click(function(){
+$('#slide-upload-image .upload-image-icon').click(function(){
   if(markerObjects[current_marker_id].image.length >= 5){
     Swal.fire(
       'Uploading Photos',
@@ -252,6 +262,21 @@ $('#slide-upload-image').click(function(){
 
 $(".js-file-upload").on("change", function(e){
   $('.btn-upload-image').click();
+})
+
+$(document).ready(function(){
+  $image_crop = $('#image_demo').croppie({
+    enableExif: true,
+    viewport: {
+      width:600,
+      height:350,
+      type:'square' //circle
+    },
+    boundary:{
+      width:700,
+      height:350
+    }
+  })
 })
 
 $('#w1').on('beforeSubmit', function(){
@@ -269,30 +294,56 @@ $('#w1').on('beforeSubmit', function(){
     )
     refreshImageUploader();
     return false;
-  }
-  
-  var formData = new FormData();
-  formData.append('image', $('.js-file-upload')[0].files[0]);
-  formData.append('action', 'upload');
+  }  
+
+  var reader = new FileReader();
+    reader.onload = function (event) {
+      $image_crop.croppie('bind', {
+        url: event.target.result
+      }).then(function(){
+        console.log('jQuery bind complete');
+      });
+    }
+    reader.readAsDataURL($('.js-file-upload')[0].files[0]);
+    $('#uploadimageModal').modal('show');
+
+    return false;
+});
+
+$('.crop_image').click(function(event){
+  $image_crop.croppie('result', {
+    type: 'canvas',
+    size: 'viewport'
+  }).then(function(response){
+
+    var formData = new FormData();
+    formData.append('image', response);
+    formData.append('image_name', $('.js-file-upload')[0].files[0]);
+    formData.append('action', 'upload');
 
     $.ajax({
-        url: 'index.php?r=post/create',
-        type: 'POST',
-        data: formData,
+      url: 'index.php?r=post/create',
+      type: 'POST',
+      data: formData,
         success: function(res){
           markerObjects[current_marker_id].addImage(res);
           refreshImageUploader();
           refreshImagesSlideShow();
+          $('#uploadimageModal').modal('hide');
         },
         error: function(){
-            alert('Error!');
+          alert('Error!');
         },
-        cache: false,
-        contentType: false,
-        processData: false
+      cache: false,
+      contentType: false,
+      processData: false
     });
-    return false;
+  })
 });
+
+$('#uploadimageModal').on('hidden.bs.modal', function () {
+  refreshImageUploader();
+})
 
 refreshImageUploader = function(){
   $('.js-file-upload').val("");
@@ -315,11 +366,11 @@ refreshImagesSlideShow = function(){
     var is_last = "";
     if(index == (markerObjects[current_marker_id].image.length - 1)) var is_last = "active";
 
-    var tags = '<div class="item ' + is_last + '"><img class="slide-images-style" src="uploads/marker_images/' + value + '"><div class="carousel-caption"><input type="text" class="cool-input-for-slide" maxlength="40" value="' + markerObjects[current_marker_id].text[index] + '"></div></div>';
+    var tags = '<div class="item ' + is_last + '"><img class="slide-images-style" src="uploads/marker_images/' + value + '"><div class="carousel-caption"><input type="text" class="cool-input-for-slide" maxlength="40" image_num="' + index + '" value="' + markerObjects[current_marker_id].text[index] + '"></div></div>';
     $('.carousel-inner').append(tags);
 
     var li = '<li class="' + is_last + '" data-target="#w2" data-slide-to="' + index + '"></li>';
-    $('.carousel-indicators').append(li);
+    $('.carousel-indicators').append(li);  
   });
 }
 
@@ -339,11 +390,17 @@ standartImagesSlideShow = function(){
   $('.carousel-indicators').append(li);
 }
 
+$(document).on('keyup', "input[class='cool-input-for-slide']",function () {
+  var image_num = $(this).attr("image_num");
+  markerObjects[current_marker_id].text[image_num] = $(this).val();
+})
+
 createMarkerObj = function(id){
   markerObjects[id] = new Marker_obj();
   current_marker_id = id;
 
-  refreshImagesSlideShow()
+  refreshImagesSlideShow();
+  refreshDescription();
 }
 
 $("#click-span-travel-add-photos").on("click", function(){
@@ -357,6 +414,7 @@ $("#click-span-travel-add-photos").on("click", function(){
   }
 
   if($(this).text() == "Add Photos"){
+    hideDescription();
     refreshImagesSlideShow();
     showSlideShow();
     scrollToSlideShow();
@@ -425,11 +483,11 @@ loadInfoWindow = function(map, marker){
   var titleText;  //before we add some text to info-window
   var mainText;
   
-  if(markerObjects[current_marker_id].mainText == "") titleText = "Brief description";
-  else titleText = markerObjects[id].mainText;
+  if(markerObjects[current_marker_id].mainTitle == "") titleText = "Brief description";
+  else titleText = markerObjects[current_marker_id].mainTitle;
 
-  if(markerObjects[current_marker_id].mainTitle == "") mainText = "Describe your stop at this place. You can also upload multiple photos from this location.";
-  else mainText = markerObjects[id].mainTitle;
+  if(markerObjects[current_marker_id].mainText == "") mainText = "Describe your stop at this place. You can also upload multiple photos from this location.";
+  else mainText = markerObjects[current_marker_id].mainText;
 
   marker.info = new google.maps.InfoWindow({
     content: '<div class="title-info-window">' + titleText +'</div><div class="description-info-window">' + mainText + '</div><div class="button-info-window"><ion-icon onclick="removeMarker()" id="remove-marker-icon" name="close-circle-outline" mark="' + current_marker_id + '"></ion-icon></div>'
@@ -459,6 +517,7 @@ removeMarker = function(){
   deletePlanCoordinates(lat, lng);
   buildRoad(flightPlanCoordinates, map);
   hideSlideShow();
+  hideDescription();
   current_marker_id = undefined;
 }
 
@@ -480,7 +539,7 @@ deletePolilines = function(){
   });
 }
 
-removeAllMarkersData = function(){
+removeAllMarkersData = function(deleteOnlyImages){
   var imageDeleteList = [];
   $.each(markerObjects, function( index, value ) {
     $.each(value.image, function( index, image ) {
@@ -488,8 +547,10 @@ removeAllMarkersData = function(){
     });
     value.image = [];
     value.text = [];
-    value.mainText = "";
-    value.mainTitle = "";
+    if(deleteOnlyImages == 0){
+      value.mainText = "";
+      value.mainTitle = "";
+    }
   });
 
   imageDeleteList = JSON.stringify(imageDeleteList);
@@ -543,14 +604,14 @@ removeMarkerData = function(id){
 checkIfUserIsShure = function(){
   Swal.fire({
     title: 'Are you sure?',
-    text: 'You will not be able to recover this imaginary file!',
+    text: 'You will not be able to recover deleted photos!',
     type: 'warning',
     showCancelButton: true,
     confirmButtonText: 'Yes, delete it!',
     cancelButtonText: 'No, keep it'
   }).then((result) => {
     if (result.value) {
-      removeAllMarkersData();
+      removeAllMarkersData(1);
       hideSlideShow();
       Swal.fire(
         'Deleted!',
@@ -562,3 +623,104 @@ checkIfUserIsShure = function(){
     }
   })
 };
+
+removeAllMarkersFromMap = function(){
+  $.each(allMarkers, function( index, value ) {
+    value.setMap(null);
+  })
+  allMarkers = [];
+  markerObjects = [];
+  deletePolilines();
+  flightPathArray = [];
+  flightPlanCoordinates = [];
+}
+
+$('#click-span-travel-add-descript').click(function(){
+
+  if(typeof current_marker_id == 'undefined') {
+    Swal.fire({
+      title: 'Please, add or check the marker for adding description to him...',
+      animation: false,
+      customClass: 'animated tada'
+    })
+    return;
+  }
+
+  if($('#click-span-travel-add-descript').text() == 'Add Description'){
+    showDescription();
+  }else if($('#click-span-travel-add-descript').text() == 'Hide Description'){
+    hideDescription();
+  }
+})
+
+refreshDescription = function(){
+  $('.title-decr-input').val(markerObjects[current_marker_id].mainTitle);
+  $('#text-decr-input').val(markerObjects[current_marker_id].mainText);
+}
+
+showDescription = function(){
+  hideSlideShow();
+
+  $('.place-brief-descr').css({'position':'relative', 'opacity': "1", 'height': 'auto', 'margin-top': '30px', 'visibility': 'visible', 'z-index': 'unset'});
+
+  refreshDescription();
+
+  $('#click-span-travel-add-descript').text('Hide Description');
+}
+
+hideDescription = function(){
+  $('.place-brief-descr').css({'opacity': "0", 'height': '0px', 'margin-top': '0px', 'visibility': 'hidden', 'z-index': '0'});
+  setTimeout(function(){
+    $('.place-brief-descr').css({'position':'absolute'});
+  },500);
+
+ $('#click-span-travel-add-descript').text('Add Description');
+}
+
+$('#text-decr-input').on('keydown', function(){
+  var el = this;
+  setTimeout(function(){
+    el.style.cssText = 'height:auto; padding:0';
+    el.style.cssText = 'height:' + el.scrollHeight + 'px';
+  },0);
+
+  markerObjects[current_marker_id].mainText = $('#text-decr-input').val();
+})
+
+$('.title-decr-input').on('keydown', function(){
+  markerObjects[current_marker_id].mainTitle = $('.title-decr-input').val();
+})
+
+$('#slide-upload-image .remove-image-icon').click(function(){
+  var image_num = $('.carousel .carousel-inner > .active > .carousel-caption > .cool-input-for-slide').attr('image_num');
+
+  if(typeof image_num == 'undefined') {
+    refreshImagesSlideShow();
+    return;
+  }
+
+  var imageDeleteList = [];
+  imageDeleteList.push(markerObjects[current_marker_id].image[image_num]);
+
+  imageDeleteList = JSON.stringify(imageDeleteList);
+  
+  var data = {
+    'image_list': imageDeleteList,
+    'action': "delete"
+  }
+
+    $.ajax({
+        url: 'index.php?r=post/create',
+        type: 'POST',
+        data: data,
+        success: function(res){
+          markerObjects[current_marker_id].image.splice(image_num, 1);
+          markerObjects[current_marker_id].text.splice(image_num, 1);
+          refreshImagesSlideShow();
+        },
+        error: function(){
+            alert('Error!');
+        }
+    });
+})
+

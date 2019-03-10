@@ -112,7 +112,8 @@ class PostController extends Controller
             $action = $_POST['action'];
             
             if($action == "upload"){
-                $model2->image = $_FILES['image'];
+                $model2->image = $_POST['image'];
+                $model2->image_name = $_POST['image_name'];
                 $image_name = $model2->uploadFile('image.jpg');
                 echo $image_name;
                 die();
