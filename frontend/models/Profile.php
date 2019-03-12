@@ -16,6 +16,7 @@ use common\models\User;
  * @property string $middle_name
  * @property int $birthday
  * @property int $gender
+ * @property string $background_url
  *
  * @property User $user
  */
@@ -36,9 +37,10 @@ class Profile extends \yii\db\ActiveRecord
     {
         return [
             [['user_id'], 'required'],
-            [['user_id', 'birthday', 'gender'], 'integer'],
+            [['user_id', 'gender'], 'integer'],
             [['avatar'], 'string', 'max' => 255],
             [['first_name', 'second_name', 'middle_name'], 'string', 'max' => 32],
+            [['background_url'], 'string', 'max' => 500],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
@@ -57,6 +59,7 @@ class Profile extends \yii\db\ActiveRecord
             'middle_name' => 'Middle Name',
             'birthday' => 'Birthday',
             'gender' => 'Gender',
+            'background_url' => 'Background Url',
         ];
     }
 

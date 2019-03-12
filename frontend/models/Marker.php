@@ -3,27 +3,29 @@
 namespace frontend\models;
 
 use Yii;
+use frontend\models\Post;
 
 /**
- * This is the model class for table "pathway".
+ * This is the model class for table "marker".
  *
  * @property int $id
- * @property double $lat
- * @property double $len
- * @property string $brief_descr
  * @property int $id_post
+ * @property double $lat
+ * @property double $lng
+ * @property string $title
+ * @property string $text
  *
- * @property Imageway[] $imageways
  * @property Post $post
+ * @property MarkerImage[] $markerImages
  */
-class Pathway extends \yii\db\ActiveRecord
+class Marker extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'pathway';
+        return 'marker';
     }
 
     /**
@@ -32,10 +34,10 @@ class Pathway extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['lat', 'len', 'id_post'], 'required'],
-            [['lat', 'len'], 'number'],
-            [['brief_descr'], 'string'],
+            [['id_post', 'lat', 'lng'], 'required'],
             [['id_post'], 'integer'],
+            [['lat', 'lng'], 'number'],
+            [['text'], 'string'],
             [['id_post'], 'exist', 'skipOnError' => true, 'targetClass' => Post::className(), 'targetAttribute' => ['id_post' => 'id']],
         ];
     }
@@ -47,19 +49,12 @@ class Pathway extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'lat' => 'Lat',
-            'len' => 'Len',
-            'brief_descr' => 'Brief Descr',
             'id_post' => 'Id Post',
+            'lat' => 'Lat',
+            'lng' => 'Lng',
+            'title' => 'Title',
+            'text' => 'Text',
         ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getImageways()
-    {
-        return $this->hasMany(Imageway::className(), ['id_pathway' => 'id']);
     }
 
     /**
@@ -68,5 +63,13 @@ class Pathway extends \yii\db\ActiveRecord
     public function getPost()
     {
         return $this->hasOne(Post::className(), ['id' => 'id_post']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMarkerImages()
+    {
+        return $this->hasMany(MarkerImage::className(), ['id_marker' => 'id']);
     }
 }

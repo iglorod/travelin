@@ -51,6 +51,8 @@ $this->title = 'My Yii Application';
           <!-- /.modal-dialog -->
 </div>
 
+<p class="push-and-push">PUSH</p>
+
 <p class="text-justify cko">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt 
   ut labore et dolore magna aliqua. Diam maecenas sed enim ut sem viverra aliquet. Maecenas 
   volutpat blandit aliquam etiam erat velit scelerisque in dictum. Elementum pulvinar etiam non quam lacus suspendisse faucibus. Phasellus vestibulum lorem sed risus ultricies tristique nulla aliquet enim. Congue quisque egestas diam in arcu. Auctor augue mauris augue neque gravida in fermentum et. Et ligula ullamcorper malesuada proin. Turpis tincidunt id aliquet risus feugiat in. Ut enim blandit volutpat maecenas volutpat blandit aliquam. Auctor urna nunc id cursus. Nullam vehicula ipsum a arcu. Vestibulum lectus mauris ultrices eros in cursus turpis massa. Diam vel quam elementum pulvinar.

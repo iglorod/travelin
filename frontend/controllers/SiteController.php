@@ -13,6 +13,8 @@ use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
 use frontend\models\ContactForm;
 use frontend\models\Profile;
+use frontend\models\ImageUpload;
+
 
 /**
  * Site controller
@@ -45,13 +47,13 @@ class SiteController extends Controller
                         'roles' => ['@'],
                     ],
                 ],
-            ],
+            ],/*
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'logout' => ['post'],
                 ],
-            ],
+            ],*/
         ];
     }
 
@@ -229,18 +231,61 @@ class SiteController extends Controller
     }
 
     public function actionProfile(){
+        $model2 = new ImageUpload();
         $model = ($model = Profile::findOne(['user_id' => Yii::$app->user->id])) ? $model : new Profile();
-        $model->user_id = Yii::$app->user->id;
+        $model->birthday = date("d-m-Y", $model->birthday);
+        $folder_name = "profile/";
+        
+        if($model->user_id == "") { 
+            $model->user_id = Yii::$app->user->id;
+            $model->background_url = "1.png";
+            $model->avatar = 'circle.png';
+            $folder_name = "";
+        }
 
-        if($model->load(Yii::$app->request->post()) && $model->validate())
-            if($model->save())
-                Yii::$app->session->setFlash('success', 'Profile updated');
-            else{
-                Yii::$app->session->setFlash('error', 'Profile not updated');
-                Yii::error("Error update profile");
+        if($model->background_url == ""){
+            $model->background_url = "1.png";
+            $folder_name = "";
+        }
+
+        $this->layout = 'profile';
+        $this->view->params['background'] = $folder_name . $model->background_url;
+        
+
+        if(Yii::$app->request->post('Profile')){
+            $post =Yii::$app->request->post('Profile');
+            $model->first_name = $post['first_name'];
+            $model->second_name = $post['second_name'];
+            $model->middle_name = $post['middle_name'];
+            $model->birthday = strtotime($post['birthday']);
+            $model->gender = $post['gender'];
+            
+            if($model->validate() && $model->save()){
                 return $this->refresh();
             }
-                    
+        }
+        if(Yii::$app->request->isAjax){
+            $action = $_POST['action'];
+            
+            if($action == "upload-back-image"){
+                $model2->image = $_POST['image'];
+                $model2->image_name = $_POST['image_name'];
+                $model2->folder = 'profile/';
+                $model->background_url = $model2->uploadFile($model->background_url);
+                $model->save();
+                echo $model->background_url;
+                die();
+            }else if($action == "upload-avatar-image"){
+                $model2->image = $_POST['image'];
+                $model2->image_name = $_POST['image_name'];
+                $model2->folder = 'profile_avatar/';
+                $model->avatar = $model2->uploadFile($model->avatar);
+                $model->save();
+                echo $model->avatar;
+                die();
+            }
+        }
+
         return $this->render( 'profile', ['model' => $model] );
     }
 }

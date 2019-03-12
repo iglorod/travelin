@@ -12,7 +12,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Posts', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
-<?php $form = ActiveForm::begin(); ?>
+<?php $form = ActiveForm::begin(['options' => ['class'=>'create-post-form']]); ?>
 
 <div class="city-post-create">
     <p class='text-center cool-font-title'>Specify City</p>
@@ -50,6 +50,9 @@ $this->params['breadcrumbs'][] = $this->title;
     ])->label(false);
     ?>
 
+    <?= $form->field($model, 'result_markers')->hiddenInput(['class'=>'hidden-input-markers'])->label(false); ?>
+    <?= $form->field($model, 'result_polilyne')->hiddenInput(['class'=>'hidden-input-polyline'])->label(false); ?>
+
     <div class="form-group">
         <span id="click-span-back">Turn Back</span>
         <span id="click-span-travel">Travel Path</span>
@@ -57,11 +60,11 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 
     </div>
-
 </div>
+
 <?php ActiveForm::end(); ?>
 
-<?php $form1 = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
+<?php $form1 = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data', 'class'=>'add-image-create-post-form']]); ?>
 
 <?= $form1->field($model2, 'image')->fileInput(['maxlength' => true, 'class'=>'js-file-upload', 'style' => 'display: none;'])->label(false) ?>
 
@@ -109,7 +112,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div class="place-brief-descr row">
   <div class="title-decr-div col-xs-12 col-sm-5">
-    <input type="text" class="title-decr-input form-control" placeholder="Make Up The Title">
+    <input type="text" class="title-decr-input form-control" placeholder="Make Up The Title" maxlength="50">
   </div>
   <div class="text-descr-div col-xs-12 col-sm-7">
     <textarea name="text" id="text-decr-input" class="form-control" rows="1" placeholder="Add Brief Description About This Stage"></textarea>
@@ -117,7 +120,7 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 
 <div id="uploadimageModal" class="modal" role="dialog">
-	<div class="modal-dialog">
+	<div class="modal-dialog create-modal-dialog">
 		<div class="modal-content">
       		<div class="modal-header">
         		<button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -128,11 +131,8 @@ $this->params['breadcrumbs'][] = $this->title;
   					<div class="col-xs-12 text-center">
 						  <div id="image_demo" style="width:100%; margin-top:30px"></div>
   					</div>
-  					<div class="col-xs-12" style="padding-top:30px;">
-  						<br />
-  						<br />
-  						<br/>
-						  <button class="btn btn-success crop_image">Crop & Upload Image</button>
+  					<div class="col-xs-12 button-crop-image" style="padding-top:30px;">
+						  <button class="btn crop_image">Crop & Upload Image</button>
 					</div>
 				</div>
       		</div>
@@ -155,7 +155,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
 function activeSearch(){
   var input = document.getElementById('post-id_place');
-  autocomplete = new google.maps.places.Autocomplete(input);
+
+  var options = {
+    types: ['(cities)']
+  };
+
+  autocomplete = new google.maps.places.Autocomplete(input, options);
 }
 
 function initialize() {
@@ -194,7 +199,9 @@ function placeMarkerAndPanTo(latLng, map, id_marker, allMarkers) {
           icon: "http://maps.google.com/mapfiles/ms/icons/purple-dot.png",
           id: id_marker
         });
+        console.log(marker);
         map.panTo(latLng);
+        console.log(marker);
         allMarkers.push(marker);
 
         marker.addListener('click', function() {
@@ -204,7 +211,7 @@ function placeMarkerAndPanTo(latLng, map, id_marker, allMarkers) {
         });
 
         loadPrevMarker(map, allMarkers);
-        createMarkerObj(id_marker);
+        createMarkerObj(id_marker, latLng);
         loadCurrMarker(map, marker);
       }
 

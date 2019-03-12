@@ -14,12 +14,17 @@ use common\models\User;
  * @property string $text
  * @property int $created_at
  * @property int $updated_at
+ * @property string $polilynes
  *
- * @property Pathway[] $pathways
+ * @property Marker[] $markers
  * @property User $author
  */
 class Post extends \yii\db\ActiveRecord
 {
+    /** return map result from post/create */
+    public $result_markers;
+    public $result_polilyne;
+    
     /**
      * {@inheritdoc}
      */
@@ -34,9 +39,9 @@ class Post extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_author', 'id_place', 'text', 'created_at', 'updated_at'], 'required'],
-            [['id_author', 'updated_at'], 'integer'],
-            [['text', 'created_at'], 'string'],
+            [['id_place', 'text'], 'required'],
+            [['id_author', 'created_at', 'updated_at'], 'integer'],
+            [['text', 'polilynes', 'result_markers', 'result_polilyne'], 'string'],
             [['id_place'], 'string', 'max' => 100],
             [['id_author'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['id_author' => 'id']],
         ];
@@ -54,15 +59,16 @@ class Post extends \yii\db\ActiveRecord
             'text' => 'Text',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'polilynes' => 'Polilynes',
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getPathways()
+    public function getMarkers()
     {
-        return $this->hasMany(Pathway::className(), ['id_post' => 'id']);
+        return $this->hasMany(Marker::className(), ['id_post' => 'id']);
     }
 
     /**

@@ -11,6 +11,7 @@ class ImageUpload extends Model{
 
     public $image;
     public $image_name;
+    public $folder;
 
     public function rules(){
         return [
@@ -19,8 +20,8 @@ class ImageUpload extends Model{
     }
 
     public function uploadFile($currentImage){
-            if (file_exists(Yii::getAlias('@frontend') . '/web/uploads/marker_images/' . $currentImage) && $currentImage!='') {
-                unlink(Yii::getAlias('@frontend') . '/web/uploads/marker_images/' . $currentImage);
+            if (file_exists(Yii::getAlias('@frontend') . '/web/uploads/' . $this->folder . $currentImage) && $currentImage!='') {
+                unlink(Yii::getAlias('@frontend') . '/web/uploads/' . $this->folder . $currentImage);
             }
 
             $image_array_1 = explode(";", $this->image);
@@ -31,7 +32,7 @@ class ImageUpload extends Model{
             $baseName = $expl[0];
 
             $filename = strtolower(md5(uniqid($baseName)) . '.png');
-            $target = Yii::getAlias('@frontend') . '/web/uploads/marker_images/' . $filename;
+            $target = Yii::getAlias('@frontend') . '/web/uploads/' . $this->folder . $filename;
             file_put_contents($target, $data);
 
             return $filename;

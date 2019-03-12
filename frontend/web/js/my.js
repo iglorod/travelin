@@ -1,44 +1,10 @@
-/*
-     function initMap()
-    {
-    var element = document.getElementById("map");
-    var options = {
-        zoom: 5,
-        center: { lat: 50.431782, lng:30.516382 }
-    };
-
-    var myMap = new google.maps.Map(element, options);
-
-    }
-
-
-    function initMap() {
-  var address = 'Kiev';
-  var element = document.getElementById("map");
-
-  var geocoder = new google.maps.Geocoder();
-  geocoder.geocode({
-    'address': address
-  }, function(results, status) {
-    if (status == google.maps.GeocoderStatus.OK) {
-      var Lat = results[0].geometry.location.lat();
-      var Lng = results[0].geometry.location.lng();
-      var myOptions = {
-        zoom: 11,
-        center: new google.maps.LatLng(Lat, Lng)
-      };
-      var map = new google.maps.Map(element, myOptions);
-    } else {
-      alert("Something got wrong " + status);
-    }
-  });
-}*/
-
 function Marker_obj() {
   this.image = [];
   this.text = [];
   this.mainText = "";
   this.mainTitle = "";
+  this.lat = "";
+  this.lng = "";
 }
 
 Marker_obj.prototype.addImage = function(image) {
@@ -62,7 +28,6 @@ $('#modal-default').on("keyup","#search_autocomplete_input", function(e){
       input: $(this).val()
     },
     function(data) {
-      console.log(data);
       if(Object.values(data)[1] == "OK"){
         var value = Object.values(data)[0];
         var structure = '<div class="searching-city">';
@@ -86,6 +51,13 @@ $('#modal-default').on("keyup","#search_autocomplete_input", function(e){
   }
 });
 
+$('.push-and-push').click(function(){
+    $.getJSON('https://maps.googleapis.com/maps/api/place/textsearch/json?types=point_of_interest&location=32.772553335091,-97.366847991943&radius=10&key=AIzaSyBB2gXITRe0zhIOQVJ_fyOVMt965cq_gO4',
+    function(data) {
+    console.log(data);
+    });
+})
+
 $(function() {
   if($('nav').length == 0) return;
   checkingNavBar();
@@ -108,8 +80,21 @@ $('.search-posts').click(function(){
   $('#modal-default').modal('show');
 });
 
-$('.btn-create-post').click(function(){
+$('.create-post-form').on('beforeSubmit', function(){
   $('#post-id_place').val(placeId);
+  
+  var markersArray = [];
+
+  $.each(markerObjects, function( index, value ) {
+    if(value.lat == "" || value.lng == "") return;
+    markersArray.push(value);
+  })
+
+  markersArray = JSON.stringify(markersArray);
+  $('.hidden-input-markers').val(markersArray);
+
+  var planCoordinates = JSON.stringify(flightPlanCoordinates);
+  $('.hidden-input-polyline').val(planCoordinates);
 })
 
 $('#modal-default').on('hidden.bs.modal', function (e) {
@@ -127,11 +112,14 @@ $('#click-span').click(function(){
     )
     return; 
   }
-  if(placeId != autocomplete.getPlace()['place_id']) { 
+
+  if(placeId == undefined) placeId = autocomplete.getPlace()['place_id'];
+  else if(placeId != autocomplete.getPlace()['place_id']) { 
     mapIsCreated = 0;
     removeAllMarkersData(0);
     removeAllMarkersFromMap();
   }
+  
   $('.city-post-create').css({'visibility':'hidden', 'margin-top': '-200px', 'opacity': '0'});
 
   $('.post-create').css({'visibility':'visible', 'position':'inherit', 'opacity':'1'});
@@ -201,10 +189,10 @@ checkingNavBar = function(){
   }
   else{
     if(is_orange){
-      $('.navbar').removeClass('menu-down');
-      $(document).width()>767 ? $('.navbar li>a').css({"color": "rgba(255, 255, 255, 1)"}) : $('.navbar li>a').css({"color": "#ffbf38"});
+      $('.navbar').removeClass('menu-down');/**#ffbf38 */
+      $(document).width()>767 ? $('.navbar li>a').css({"color": "rgba(255, 255, 255, 1)"}) : $('.navbar li>a').css({"color": "black"});
       $('.navbar .navbar-brand').css({"color": "rgba(255, 255, 255, 1)", "font-weight": "400"});
-      $(document).width()>767 ? $('.navbar .active>a').css({"color": "black", "background": "rgba(255, 255, 255, 1)"}) : $('.navbar .active>a').css({"color": "white", "background": "#ffbf38"})
+      $(document).width()>767 ? $('.navbar .active>a').css({"color": "black", "background": "rgba(255, 255, 255, 1)"}) : $('.navbar .active>a').css({"color": "black", "background": "#f0f1f2"})
       $('.navbar .navbar-toggle').css({"background": "transparent"});
       $('.navbar').css({"box-shadow": "none"});
     }else{
@@ -264,22 +252,8 @@ $(".js-file-upload").on("change", function(e){
   $('.btn-upload-image').click();
 })
 
-$(document).ready(function(){
-  $image_crop = $('#image_demo').croppie({
-    enableExif: true,
-    viewport: {
-      width:600,
-      height:350,
-      type:'square' //circle
-    },
-    boundary:{
-      width:700,
-      height:350
-    }
-  })
-})
 
-$('#w1').on('beforeSubmit', function(){
+$('.add-image-create-post-form').on('beforeSubmit', function(){
 
   if($('.js-file-upload')[0].files.length == 0){
     return false;
@@ -295,6 +269,21 @@ $('#w1').on('beforeSubmit', function(){
     refreshImageUploader();
     return false;
   }  
+
+  $image_crop = $('#image_demo').croppie('destroy');
+
+  $image_crop = $('#image_demo').croppie({
+    enableExif: true,
+    viewport: {
+      width:600,
+      height:350,
+      type:'square' //circle
+    },
+    boundary:{
+      width:698,
+      height:350
+    }
+  })
 
   var reader = new FileReader();
     reader.onload = function (event) {
@@ -397,6 +386,8 @@ $(document).on('keyup', "input[class='cool-input-for-slide']",function () {
 
 createMarkerObj = function(id){
   markerObjects[id] = new Marker_obj();
+  markerObjects[id].lat = allMarkers[id].position.lat();
+  markerObjects[id].lng = allMarkers[id].position.lng();
   current_marker_id = id;
 
   refreshImagesSlideShow();
@@ -550,6 +541,8 @@ removeAllMarkersData = function(deleteOnlyImages){
     if(deleteOnlyImages == 0){
       value.mainText = "";
       value.mainTitle = "";
+      value.lat = "";
+      value.lng = "";
     }
   });
 
@@ -582,6 +575,8 @@ removeMarkerData = function(id){
   markerObjects[id].text = [];
   markerObjects[id].mainText = "";
   markerObjects[id].mainTitle = "";
+  markerObjects[id].lat = "";
+  markerObjects[id].lng = "";
 
   imageDeleteList = JSON.stringify(imageDeleteList);
   
@@ -677,7 +672,7 @@ hideDescription = function(){
  $('#click-span-travel-add-descript').text('Add Description');
 }
 
-$('#text-decr-input').on('keydown', function(){
+$('#text-decr-input').on('keyup', function(){
   var el = this;
   setTimeout(function(){
     el.style.cssText = 'height:auto; padding:0';
@@ -687,7 +682,7 @@ $('#text-decr-input').on('keydown', function(){
   markerObjects[current_marker_id].mainText = $('#text-decr-input').val();
 })
 
-$('.title-decr-input').on('keydown', function(){
+$('.title-decr-input').on('keyup', function(){
   markerObjects[current_marker_id].mainTitle = $('.title-decr-input').val();
 })
 
@@ -724,3 +719,186 @@ $('#slide-upload-image .remove-image-icon').click(function(){
     });
 })
 
+$('.upload-background-span').click(function(){
+  $('.profile-js-file-upload').click();
+})
+
+$(".profile-js-file-upload").on("change", function(e){
+  if($('.profile-js-file-upload')[0].files.length == 0){
+    return false;
+  }
+
+  var my_arr = $('.profile-js-file-upload')[0].files[0]['name'].split(".");
+  if(my_arr[1] != 'png' && my_arr[1] != 'jpeg' && my_arr[1] != 'jpg') {
+    Swal.fire(
+      'Pictures Format',
+      "Available formats are '.png' '.jpg' or '.jpeg'",
+      'info'
+    )
+    refreshProfileImageUploader();
+    return false;
+  }  
+  $image_crop = $('#image_demo').croppie('destroy');
+  
+  $image_crop = $('#image_demo').croppie({
+    enableExif: false,
+    viewport: {
+      width:$( window ).width(),
+      height:250,
+      type:'square' //circle
+    },
+    boundary:{
+      width:$( window ).width(),
+      height:350
+    }
+  })
+
+  var reader = new FileReader();
+    reader.onload = function (event) {
+      $image_crop.croppie('bind', {
+        url: event.target.result
+      }).then(function(){
+        console.log('jQuery bind complete');
+      });
+    }
+    reader.readAsDataURL($('.profile-js-file-upload')[0].files[0]);
+    $('#uploadBackImage').modal('show');
+})
+
+$('.crop-back-profile').click(function(event){
+  $image_crop.croppie('result', {
+    type: 'canvas',
+    size: 'viewport'
+  }).then(function(response){
+
+    var formData = new FormData();
+    formData.append('image', response);
+    formData.append('image_name', $('.profile-js-file-upload')[0].files[0]);
+    formData.append('action', 'upload-back-image');
+
+    $.ajax({
+      url: 'index.php?r=site/profile',
+      type: 'POST',
+      data: formData,
+        success: function(res){
+          //$('.profile-upload-div').css({'display': 'none'});
+          refreshProfileImageUploader();
+          setBackProfileImage(res);
+          $('#uploadBackImage').modal('hide');
+        },
+        error: function(){
+          alert('Error!');
+        },
+      cache: false,
+      contentType: false,
+      processData: false
+    });
+  })
+});
+
+$('#uploadBackImage').on('hidden.bs.modal', function () {
+  refreshProfileImageUploader();
+})
+
+refreshProfileImageUploader = function(){
+  $('.profile-js-file-upload').val("");
+}
+
+setBackProfileImage = function(res){
+  $('.profile-back-top').removeAttr("style");
+  $('.profile-back-top').attr("style", "background: url('/frontend/web/uploads/profile/" + res + "') 100% 100% no-repeat; background-size: cover;");
+}
+
+$('.profile-circle-image').click(function(){
+  $('.avatar-js-file-upload').click();
+})
+
+$(".avatar-js-file-upload").on("change", function(e){
+  if($('.avatar-js-file-upload')[0].files.length == 0){
+    return false;
+  }
+
+  var my_arr = $('.avatar-js-file-upload')[0].files[0]['name'].split(".");
+  if(my_arr[1] != 'png' && my_arr[1] != 'jpeg' && my_arr[1] != 'jpg') {
+    Swal.fire(
+      'Pictures Format',
+      "Available formats are '.png' '.jpg' or '.jpeg'",
+      'info'
+    )
+    refreshAvatarImageUploader();
+    return false;
+  }  
+
+  $image_crop = $('#avatar_demo').croppie('destroy');
+  
+  $image_crop = $('#avatar_demo').croppie({
+    enableExif: false,
+    viewport: {
+      width: 250,
+      height:250,
+      type:'circle' //square
+    },
+    boundary:{
+      width:300,
+      height:300
+    }
+  })
+
+  var reader = new FileReader();
+    reader.onload = function (event) {
+      $image_crop.croppie('bind', {
+        url: event.target.result
+      }).then(function(){
+        console.log('jQuery bind complete');
+      });
+    }
+    reader.readAsDataURL($('.avatar-js-file-upload')[0].files[0]);
+    $('#uploadAvatarImage').modal('show');
+})
+
+$('.crop-back-avatar').click(function(event){
+  $image_crop.croppie('result', {
+    type: 'canvas',
+    size: 'viewport'
+  }).then(function(response){
+
+    var formData = new FormData();
+    formData.append('image', response);
+    formData.append('image_name', $('.avatar-js-file-upload')[0].files[0]);
+    formData.append('action', 'upload-avatar-image');
+
+    $.ajax({
+      url: 'index.php?r=site/profile',
+      type: 'POST',
+      data: formData,
+        success: function(res){
+          //$('.profile-upload-div').css({'display': 'none'});
+          refreshAvatarImageUploader();
+          setAvatarProfileImage(res);
+          $('#uploadAvatarImage').modal('hide');
+        },
+        error: function(){
+          alert('Error!');
+        },
+      cache: false,
+      contentType: false,
+      processData: false
+    });
+  })
+});
+
+refreshAvatarImageUploader = function(){
+  $('.avatar-js-file-upload').val("");
+}
+
+setAvatarProfileImage = function(res){
+  $('.avatar-circle-image').attr("src", "/frontend/web/uploads/profile_avatar/" + res + "");
+}
+
+$('#uploadAvatarImage').on('hidden.bs.modal', function () {
+  refreshAvatarImageUploader();
+})
+
+$('.btn-edit-profile').click(function(){
+
+})

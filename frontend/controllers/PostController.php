@@ -6,8 +6,8 @@ use Yii;
 use frontend\models\Post;
 use frontend\models\PostSearch;
 use frontend\models\ImageUpload;
-use frontend\models\Pathway;
-use frontend\models\Imageway;
+use frontend\models\Marker;
+use frontend\models\MarkerImage;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -102,9 +102,34 @@ class PostController extends Controller
             $model->id_author = Yii::$app->user->id;
             $model->created_at = strtotime(date('Y-m-d H:i:s'));
             $model->updated_at = strtotime(date('Y-m-d H:i:s'));
-    
+            $model->polilynes = serialize(json_decode(stripslashes($model->result_polilyne)));
+
+            $markers = json_decode(stripslashes($model->result_markers));
+
+            if($model->save()){
+                $post_id = $model->id;
+                
+                foreach ($markers as $key => $value){
+                    $marker = new Marker();
+                    $marker->id_post = $post_id;
+                    $marker->lat = $value->lat;
+                    $marker->lng = $value->lng;
+                    $marker->title = $value->mainTitle;
+                    $marker->text = $value->mainText;
+                    if($marker->save()){
+                        $marker_id = $marker->id;
+                        foreach ($value->image as $key => $image){
+                            $marker_image = new MarkerImage();
+                            $marker_image->id_marker = $marker_id;
+                            $marker_image->name = $image;
+                            $marker_image->text = $value->text[$key];
+                            $marker_image->save();
+                        }
+                    }
+                }
+
+            } 
             
-            if($model->save())
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -114,6 +139,7 @@ class PostController extends Controller
             if($action == "upload"){
                 $model2->image = $_POST['image'];
                 $model2->image_name = $_POST['image_name'];
+                $model2->folder = 'marker_images/';
                 $image_name = $model2->uploadFile('image.jpg');
                 echo $image_name;
                 die();
@@ -126,8 +152,8 @@ class PostController extends Controller
 
         $this->layout = 'simple';
         return $this->render('create', [
-            'model' => $model,
-            'model2'=>$model2,
+            'model' =>  $model,
+            'model2'=>  $model2,
         ]);
     }
 
