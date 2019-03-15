@@ -3,30 +3,27 @@
 namespace frontend\models;
 
 use Yii;
+use common\models\User;
 use frontend\models\Post;
-use frontend\models\MarkerImage;
 
 /**
- * This is the model class for table "marker".
+ * This is the model class for table "post_likes".
  *
  * @property int $id
  * @property int $id_post
- * @property double $lat
- * @property double $lng
- * @property string $title
- * @property string $text
+ * @property int $id_user
  *
  * @property Post $post
- * @property MarkerImage[] $markerImages
+ * @property User $user
  */
-class Marker extends \yii\db\ActiveRecord
+class PostLikes extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'marker';
+        return 'post_likes';
     }
 
     /**
@@ -35,11 +32,10 @@ class Marker extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_post', 'lat', 'lng'], 'required'],
-            [['id_post'], 'integer'],
-            [['lat', 'lng'], 'number'],
-            [['text'], 'string'],
+            [['id_post', 'id_user'], 'required'],
+            [['id_post', 'id_user'], 'integer'],
             [['id_post'], 'exist', 'skipOnError' => true, 'targetClass' => Post::className(), 'targetAttribute' => ['id_post' => 'id']],
+            [['id_user'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['id_user' => 'id']],
         ];
     }
 
@@ -51,10 +47,7 @@ class Marker extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'id_post' => 'Id Post',
-            'lat' => 'Lat',
-            'lng' => 'Lng',
-            'title' => 'Title',
-            'text' => 'Text',
+            'id_user' => 'Id User',
         ];
     }
 
@@ -69,8 +62,17 @@ class Marker extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getImages()
+    public function getUser()
     {
-        return $this->hasMany(MarkerImage::className(), ['id_marker' => 'id']);
+        return $this->hasOne(User::className(), ['id' => 'id_user']);
+    }
+
+    public function deleteLike()
+    {
+        $this->delete();
+    }
+
+    public function getCount($id){
+        return PostLikes::find()->where(['id_post'=>$id])->count();
     }
 }

@@ -8,12 +8,17 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\models\LoginForm;
+use frontend\models\Post;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
 use frontend\models\ContactForm;
 use frontend\models\Profile;
 use frontend\models\ImageUpload;
+use frontend\models\PostLikes;
+use frontend\models\Repost;
+use yii\data\Pagination;
+use yii\helpers\ArrayHelper;
 
 
 /**
@@ -29,7 +34,7 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout', 'signup', 'profile'],
+                'only' => ['logout', 'signup'],
                 'rules' => [
                     [
                         'actions' => ['signup'],
@@ -38,11 +43,6 @@ class SiteController extends Controller
                     ],
                     [
                         'actions' => ['logout'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                    [
-                        'actions' => ['profile'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -231,26 +231,77 @@ class SiteController extends Controller
     }
 
     public function actionProfile(){
+        $id = Yii::$app->request->get('id');
+        $type = Yii::$app->request->get('type');
+        
         $model2 = new ImageUpload();
-        $model = ($model = Profile::findOne(['user_id' => Yii::$app->user->id])) ? $model : new Profile();
-        $model->birthday = date("d-m-Y", $model->birthday);
+
+        $model = ($model = Profile::findOne(['user_id' => $id])) ? $model : new Profile();
+        if($model->birthday) $model->birthday = date("d-m-Y", $model->birthday);
+        
         $folder_name = "profile/";
+
+        if(Yii::$app->user->isGuest) $is_author = false;
+        else if($id == Yii::$app->user->identity->id) $is_author = true;
+        else $is_author = false;
         
         if($model->user_id == "") { 
             $model->user_id = Yii::$app->user->id;
             $model->background_url = "1.png";
             $model->avatar = 'circle.png';
             $folder_name = "";
-        }
-
-        if($model->background_url == ""){
-            $model->background_url = "1.png";
-            $folder_name = "";
+            $folder_avatar = "";
         }
 
         $this->layout = 'profile';
         $this->view->params['background'] = $folder_name . $model->background_url;
         
+
+        if($type == 'trips_list'){
+            $trips = Post::find()
+            ->where(['id_author' => $id])
+            ->orderBy('updated_at');
+
+            $pagination = new Pagination([
+                'defaultPageSize'   => 10,
+                'totalCount'        => $trips->count()
+            ]);
+
+            $trips = $trips->offset($pagination->offset)->limit($pagination->limit)->all();
+        }else if($type == 'liked_list'){
+            $liked_post_id = PostLikes::find()
+            ->where(['id_user' => $id])
+            ->all();
+
+            $data = ArrayHelper::toArray($liked_post_id, [
+                'frontend\models\PostLikes' => [
+                    'id_post',
+                ],
+            ]);
+
+            $trips = Post::find()
+            ->where(['id' => ArrayHelper::getColumn($data, 'id_post')])
+            ->orderBy('updated_at');
+
+            $pagination = new Pagination([
+                'defaultPageSize'   => 10,
+                'totalCount'        => $trips->count()
+            ]);
+
+            $trips = $trips->offset($pagination->offset)->limit($pagination->limit)->all();
+        }else if($type == 'reposted_list'){
+            $trips = Repost::find()
+            ->where(['id_user' => $id])
+            ->orderBy('created_at');
+
+            $pagination = new Pagination([
+                'defaultPageSize'   => 10,
+                'totalCount'        => $trips->count()
+            ]);
+
+            $trips = $trips->offset($pagination->offset)->limit($pagination->limit)->all();
+        }else if($type == 'liked_list'){
+        }
 
         if(Yii::$app->request->post('Profile')){
             $post =Yii::$app->request->post('Profile');
@@ -279,6 +330,7 @@ class SiteController extends Controller
                 $model2->image = $_POST['image'];
                 $model2->image_name = $_POST['image_name'];
                 $model2->folder = 'profile_avatar/';
+                if($model->avatar == 'circle.png') $model->avatar = 'img.jpg';
                 $model->avatar = $model2->uploadFile($model->avatar);
                 $model->save();
                 echo $model->avatar;
@@ -286,6 +338,13 @@ class SiteController extends Controller
             }
         }
 
-        return $this->render( 'profile', ['model' => $model] );
+        return $this->render( 'profile', [
+            'model'         => $model,
+            'is_author'     => $is_author,
+            'current_type'  => $type,
+            'trips'         => $trips,
+            'id'            => $id,
+            'pagination'    => $pagination
+            ] );
     }
 }

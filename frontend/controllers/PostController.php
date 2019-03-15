@@ -8,6 +8,9 @@ use frontend\models\PostSearch;
 use frontend\models\ImageUpload;
 use frontend\models\Marker;
 use frontend\models\MarkerImage;
+use frontend\models\PostLikes;
+use frontend\models\Repost;
+use frontend\models\RepostLikes;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -83,8 +86,40 @@ class PostController extends Controller
      */
     public function actionView($id)
     {
+        $model = $this->findModel($id);
+        
+        $markers = [];
+        $images = [];
+
+        foreach($model->markers as $marker){
+            $data = [
+                'id'    => $marker['id'],
+                'lat'   => $marker['lat'],
+                'lng'   => $marker['lng'],
+                'text'  => $marker['text'],
+                'title' => $marker['title'],
+            ];
+            array_push($markers, $data);
+
+            foreach($marker->images as $image){
+                $data1 = [
+                    'name'    => $image['name'],
+                    'text'   => $image['text'],
+                    'id_marker'   => $image['id_marker'],    
+                ];
+                array_push($images, $data1);
+            }
+        }
+
+        $markers = json_encode($markers);
+        $images = json_encode($images);
+        $model->polilynes = json_encode(unserialize($model->polilynes));
+
+        
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model'     => $model,
+            'markers'   => $markers,
+            'images'    => $images,
         ]);
     }
 
@@ -205,5 +240,66 @@ class PostController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionLikePost(){
+        $id = Yii::$app->request->post('id');
+        $likes = PostLikes::findOne([
+            'id_post' => $id,
+            'id_user'=>Yii::$app->user->identity->id,
+        ]);
+
+        if($likes==null){   //якщо лайк не існує, то створимо його
+            $likes = new PostLikes();
+            $likes->id_user=Yii::$app->user->identity->id;
+            $likes->id_post=$id;
+            $likes->save(false);
+        }else{                 //якщо існує - видалимо
+            $likes->deleteLike();
+        }
+
+        echo $likes->getCount($id);
+        die();
+    }
+
+    public function actionLikeRepost(){
+        $id = Yii::$app->request->post('id');
+        $likes = RepostLikes::findOne([
+            'id_repost' => $id,
+            'id_user'=>Yii::$app->user->identity->id,
+        ]);
+
+        if($likes==null){   //якщо лайк не існує, то створимо його
+            $likes = new RepostLikes();
+            $likes->id_user=Yii::$app->user->identity->id;
+            $likes->id_repost=$id;
+            $likes->save(false);
+        }else{                 //якщо існує - видалимо
+            $likes->deleteLike();
+        }
+
+        echo $likes->getCount($id);
+        die();
+    }
+
+    public function actionRepostPost(){
+        $id = Yii::$app->request->post('id');
+        $description = Yii::$app->request->post('description');
+
+        $repost = Repost::findOne([
+            'id_post' => $id,
+            'id_user'=>Yii::$app->user->identity->id,
+        ]);
+
+        if($repost==null){   //якщо репост не існує, то створимо його
+            $repost = new Repost();
+            $repost->id_user = Yii::$app->user->identity->id;
+            $repost->id_post = $id;
+            $repost->description = $description;
+            $repost->created_at = strtotime(date('Y-m-d H:i:s'));
+            $repost->save(false);
+        }
+
+        return $this->redirect(['site/profile','id' => Yii::$app->user->identity->id, 'type' => 'reposted_list']);
     }
 }

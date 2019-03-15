@@ -29,7 +29,7 @@ use yii\bootstrap\NavBar;
             . 'data-toggle="popover"'
             . 'data-placement="bottom"'
             . 'data-content="'
-            . '<div><a href=' .  Url::to(["/site/profile"]) . ' data-method=' . 'post' . '>Show profile</a></div>'
+            . '<div><a href=' .  Url::to(["/site/profile"]) . "&id=" . Yii::$app->user->identity->id . "&type=trips_list" . ' data-method=' . 'post' . '>Show profile</a></div>'
             . '<div><hr></div>'
             . '<div><a href=' .  Url::to(["/post/create"]) . ' data-method=' . 'post' . '>Create post</a></div>'
             . '<div><a href=' .  Url::to(["/site/logout"]) . ' data-method=' . 'post' . '>Sign out</a></div>'

@@ -1,8 +1,13 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use kartik\date\DatePicker;
+use frontend\MyWidgets\PostsList\PostsAllOut;
+use frontend\MyWidgets\PostsList\assets\PostsAsset;
+
+PostsAsset::register($this);
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Profile */
@@ -13,63 +18,80 @@ use kartik\date\DatePicker;
 	<div class="container profile-background-data">
 		<div>
 			<div class="inl-blocks">
-			<div class="profile-circle-image">
+			<?php if($is_author) { ?>
+			<div class="profile-circle-image upload-circle-image">
 				<span class="change-avatar-span">Upload Image</span>
 				<img src="/frontend/web/uploads/profile_avatar/<?= $model->avatar; ?>" class="avatar-circle-image" alt="Profile.img">
 			</div>
+			<?php } else{?>
+			<div class="profile-circle-image">
+				<img src="/frontend/web/uploads/profile_avatar/<?= $model->avatar; ?>" class="avatar-circle-image" alt="Profile.img">
+			</div>
+			<?php } ?>
 			<div>
 				<div class="profile-long-name"><span><?= $model->first_name; ?> <?= $model->second_name; ?></span></div>
-				<div class="profile-username"><span><?= Yii::$app->user->identity->username ?></span></div>
+				<div class="profile-username"><span><?= $model->user->username ?></span></div>
 			</div>
-			<div>
+			<div class="profile-static-data-div">
 				<div class="profile-stat">
 					<div class="profile-stat-title">Publications</div>
 					<div class="profile-stat-data">3</div>
 				</div>
 			</div>
-			<div>
+			<div class="profile-static-data-div">
 				<div class="profile-stat">
 					<div class="profile-stat-title">Subscribers</div>
 					<div class="profile-stat-data">3</div>
 				</div>		
 			</div>
-				<div>
-					<div class="profile-stat">
-						<div class="profile-stat-title">Subscribed</div>
+			<div class="profile-static-data-div">
+				<div class="profile-stat">
+					<div class="profile-stat-title">Subscribed</div>
 						<div class="profile-stat-data">3</div>
 					</div>
 				</div>
 			</div>
 
+			<?php if($is_author) { ?>
 			<div class="inl-blocks inl-blocks-button">
 				<div>
 					<button class="btn btn-edit-profile" data-toggle="modal" data-target="#profile-user-data"><span>Edit profile</span> <ion-icon name="browsers"></ion-icon></button>
 				</div>
 			</div>
+			<?php } ?>
 		</div>
 		<div class="profile-links">
-			<a href="#">
-				<div>
+			<a href="<?= Url::to(["/site/profile"]) ?>&id=<?= $id ?>&type=trips_list">
+				<div class="<?php if($current_type == 'trips_list') echo 'profile-link-active'; ?>">
 					<span>Trips</span>
 				</div>
 			</a>
-			<a href="#">
-				<div>
+			<a href="<?= Url::to(["/site/profile"]) ?>&id=<?= $id ?>&type=liked_list">
+				<div class="<?php if($current_type == 'liked_list') echo 'profile-link-active'; ?>">
 					<span>Liked</span>
 				</div>
 			</a>
-			<a href="#">
-				<div>
+			<a href="<?= Url::to(["/site/profile"]) ?>&id=<?= $id ?>&type=reposted_list">
+				<div class="<?php if($current_type == 'reposted_list') echo 'profile-link-active'; ?>">
 					<span>Reposts</span>
 				</div>
 			</a>
-			<a href="#">
-				<div>
+			<a href="<?= Url::to(["/site/profile"]) ?>&id=<?= $id ?>&type=travel_history">
+				<div class="<?php if($current_type == 'travel_history') echo 'profile-link-active'; ?>">
 					<span>Travel history</span>
 				</div>
 			</a>
 		</div>
 	</div>
+
+	<?php if($current_type == 'trips_list' || $current_type == 'liked_list' || $current_type == 'reposted_list') {
+		echo PostsAllOut::widget([
+			'trips'			=> $trips,
+			'pagination'	=> $pagination
+		]);
+	} else if($current_type == 'travel_history') { ?>
+
+	<?php } ?>
 
 	<div id="uploadBackImage" class="modal" role="dialog">
 		<div class="modal-dialog profile-modal-dialog">
@@ -170,7 +192,6 @@ use kartik\date\DatePicker;
 			</div>
 		</div>
 	</div>
-	
 </div>
 
 <!-- site-profile -->

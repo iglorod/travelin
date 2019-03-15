@@ -4,6 +4,9 @@ namespace frontend\models;
 
 use Yii;
 use common\models\User;
+use frontend\models\Marker;
+use frontend\models\Repost;
+use frontend\models\PostLikes;
 
 /**
  * This is the model class for table "post".
@@ -77,5 +80,29 @@ class Post extends \yii\db\ActiveRecord
     public function getAuthor()
     {
         return $this->hasOne(User::className(), ['id' => 'id_author']);
+    }
+
+    public function getLikesCount()
+    {
+        return PostLikes::find()->where(["id_post" => $this->id])->count();
+    }
+
+    public function getIsUserLiked()
+    {
+        $count = PostLikes::find()->where([ "id_post" => $this->id, "id_user" => Yii::$app->user->identity->id ])->count();
+        if($count >= 1) return "done-by-user";
+        return "";
+    }
+
+    public function getIsUserReposted()
+    {
+        $count = Repost::find()->where([ "id_post" => $this->id, "id_user" => Yii::$app->user->identity->id ])->count();
+        if($count >= 1) return "done-by-user";
+        return "";
+    }
+
+    public function getRepostsCount()
+    {
+        return Repost::find()->where(["id_post" => $this->id])->count();
     }
 }

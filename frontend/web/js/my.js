@@ -21,6 +21,39 @@ var markerObjects = []
 
 var current_marker_id;
 
+refreshMarkerObj = function(){
+  var mas_markers = JSON.parse($('.hidden-input-markers').val());
+  var mas_images = JSON.parse($('.hidden-input-images').val());
+  /*flightPlanCoordinates*/var all_polilines = JSON.parse($('.hidden-input-polyline-view').val());
+  markerObjects = [];
+  current_marker_id = 0;
+
+  $.each(mas_markers, function( index, value ) {
+    markerObjects[current_marker_id] = new Marker_obj();
+    markerObjects[current_marker_id].lat = value.lat;
+    markerObjects[current_marker_id].lng = value.lng;
+    markerObjects[current_marker_id].mainText = value.text;
+    markerObjects[current_marker_id].mainTitle = value.title;
+    $.each(mas_images, function( i, image ) {
+      if(image.id_marker == value.id){
+        markerObjects[current_marker_id].image.push(image.name);
+        markerObjects[current_marker_id].text.push(image.text);
+      }
+    })
+
+    var myLatLng = new google.maps.LatLng({lat: value.lat, lng: value.lng});
+    placeMarkerAndPanToView(myLatLng, map, index, allMarkers);
+    current_marker_id++;
+  })
+
+  $.each(all_polilines, function( index, value ) {
+    flightPlanCoordinates.push(value);
+    bildPolilynes();
+  })
+  current_marker_id--;
+  
+}
+
 $('#modal-default').on("keyup","#search_autocomplete_input", function(e){
   if($(this).val().length >= 3){
     $.getJSON('https://maps.googleapis.com/maps/api/place/autocomplete/json?types=(cities)&language=en&key=AIzaSyBB2gXITRe0zhIOQVJ_fyOVMt965cq_gO4', 
@@ -152,6 +185,21 @@ $('#click-span-travel').click(function(){
   if(mapIsCreated == 0) initMapCreate();
 })
 
+$('#click-span-view-travel').click(function(){
+  $('.post-view').css({'visibility':'hidden', 'margin-top': '-200px', 'opacity': '0'});
+
+  setTimeout(function(){
+    $('.post-view').css({'position':'absolute'});
+ },500);
+
+  $('.post-map-create').css({'visibility':'visible', 'position':'relative', 'opacity':'1', 'margin-top': '0px' });
+  $('#map-create').css({'visibility':'visible', 'position':'relative', 'opacity':'1', 'height': '400px' });
+  $('.click-span-travel-back-div').css({'visibility':'visible', 'position':'inherit', 'opacity':'1'});
+  $('.redactor-toolbar').css({'display':'none'});
+
+  if(mapIsCreated == 0) initMapCreate();
+})
+
 $('#click-span-travel-back').click(function(){
   if($('.pushed-button-add-path').length >= 1) $('#button-add-path').click();
   hideDescription();
@@ -165,6 +213,17 @@ $('#click-span-travel-back').click(function(){
 
   hideSlideShow();
   hideDescription();
+})
+
+$('#click-span-travel-back-view').click(function(){
+  $('.post-view').css({'visibility':'visible', 'margin-top': '0px', 'opacity': '1', 'position': 'relative'});
+
+  $('.post-map-create').css({'visibility':'hidden', 'position':'absolute', 'opacity':'0', 'margin-top': '200px' });
+  $('#map-create').css({'visibility':'hidden', 'position':'absolute', 'opacity':'0', 'height': '0px'});
+  $('.click-span-travel-back-div').css({'visibility':'hidden', 'position':'absolute', 'opacity':'0'});
+  $('.redactor-toolbar').css({'display':'inherit'});
+
+  hideSlideShow();
 })
 
 $(function () {
@@ -397,7 +456,7 @@ createMarkerObj = function(id){
 $("#click-span-travel-add-photos").on("click", function(){
   if(typeof current_marker_id == 'undefined') {
     Swal.fire({
-      title: 'Please, add or check the marker for inserting photo...',
+      title: 'Please, check the marker...',
       animation: false,
       customClass: 'animated tada'
     })
@@ -412,6 +471,27 @@ $("#click-span-travel-add-photos").on("click", function(){
     $(this).text("Remove All Photos");
   }else if($(this).text() == "Remove All Photos"){
     checkIfUserIsShure();
+  }
+})
+
+$("#click-span-travel-add-photos-view").on("click", function(){
+  if(typeof current_marker_id == 'undefined') {
+    Swal.fire({
+      title: 'Please, check the marker...',
+      animation: false,
+      customClass: 'animated tada'
+    })
+    return;
+  }
+
+  if($(this).text() == "Watch Photos"){
+    refreshImagesSlideShow();
+    showSlideShow();
+    scrollToSlideShow();
+    $(this).text("Hide Photos");
+  }else if($(this).text() == "Hide Photos"){
+    hideSlideShow();
+    $(this).text("Watch Photos");
   }
 })
 
@@ -461,6 +541,11 @@ loadCurrMarker = function(map, marker){
   loadInfoWindow(map, marker);
 }
 
+loadCurrMarkerForView = function(map, marker){
+  marker.setIcon("http://maps.google.com/mapfiles/ms/icons/yellow-dot.png"); //here we changing marker icon 
+  loadInfoWindowForView(map, marker);
+}
+
 standartizeAllMarkers = function(){
   $.each(allMarkers, function( index, marker ) {
     marker.setIcon("http://maps.google.com/mapfiles/ms/icons/purple-dot.png");
@@ -487,7 +572,25 @@ loadInfoWindow = function(map, marker){
   marker.info.open(map, marker);
 }
 
+loadInfoWindowForView = function(map, marker){
+  var titleText;  //before we add some text to info-window
+  var mainText;
+  
+  if(markerObjects[current_marker_id].mainTitle == "") titleText = "Brief description";
+  else titleText = markerObjects[current_marker_id].mainTitle;
+
+  if(markerObjects[current_marker_id].mainText == "") mainText = "Describe your stop at this place. You can also upload multiple photos from this location.";
+  else mainText = markerObjects[current_marker_id].mainText;
+
+  marker.info = new google.maps.InfoWindow({
+    content: '<div class="title-info-window">' + titleText +'</div><div class="description-info-window">' + mainText + '</div>'
+  });
+
+  marker.info.open(map, marker);
+}
+
 hideInfoWindow = function(map, marker){
+  if(typeof marker.info != 'undefined')
   marker.info.close(map, marker);
 };
 
@@ -809,7 +912,7 @@ setBackProfileImage = function(res){
   $('.profile-back-top').attr("style", "background: url('/frontend/web/uploads/profile/" + res + "') 100% 100% no-repeat; background-size: cover;");
 }
 
-$('.profile-circle-image').click(function(){
+$('.upload-circle-image').click(function(){
   $('.avatar-js-file-upload').click();
 })
 
@@ -899,6 +1002,86 @@ $('#uploadAvatarImage').on('hidden.bs.modal', function () {
   refreshAvatarImageUploader();
 })
 
-$('.btn-edit-profile').click(function(){
+$('.autoplay').slick({
+  slidesToShow: 1,
+  slidesToScroll: 1,
+  autoplay: false,
+  autoplaySpeed: 1500,
+});
 
+$(".like_post").click(function(){
+  var id_post = {
+      'id':$(this).attr('post')
+  };
+
+  $(this).toggleClass("done-by-user");
+ // var res = "sss";
+  //$(this).parent().parent().parent().first().children().first().children().first().children().text(res);
+  var span = this;
+  $.ajax({
+    url: 'index.php?r=post/like-post',
+    type: 'POST',
+    data: id_post,
+      success: function(res){
+        $(span).parent().parent().parent().first().children().first().children().first().children().text(res);
+      },
+      error: function(){
+        alert('Error!');
+      }
+  });
+}
+);
+
+$(".like_repost").click(function(){
+  var id_repost = {
+      'id':$(this).attr('post')
+  };
+
+  $(this).toggleClass("done-by-user");
+ // var res = "sss";
+  //$(this).parent().parent().parent().first().children().first().children().first().children().text(res);
+  var span = this;
+  $.ajax({
+    url: 'index.php?r=post/like-repost',
+    type: 'POST',
+    data: id_repost,
+      success: function(res){
+        $(span).parent().parent().parent().first().children().first().children().first().children().text(res);
+      },
+      error: function(){
+        alert('Error!');
+      }
+  });
+}
+);
+
+$('.repost_post').click(function(event){
+  var post_id = $(this).attr('post');
+  $('#reposting-post .btn-repost').attr('post_id', post_id);
+})
+
+$('.btn-repost').click(function(){
+  var id_post = {
+      'id':$(this).attr('post_id'),
+      'description': $('.description-repost-area').val()
+  };
+
+  $.ajax({
+    url: 'index.php?r=post/repost-post',
+    type: 'POST',
+    data: id_post
+  });
+})
+
+$(document).on("click", ".copy-share-link", function() {
+  var $temp = $("<input>");
+  $("body").append($temp);
+  $temp.val($('#hidden-link-post').val()).select();
+  document.execCommand("copy");
+  $temp.remove();
+});
+
+$('.toggle-popover-link').click(function(){
+  var link = $(this).attr('post_id');
+  $('#hidden-link-post').val($('#hidden-link-const').val() + link);
 })
