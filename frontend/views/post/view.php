@@ -72,23 +72,37 @@ $this->title = 'Trip Report';
   <div id="map-create"></div>
   <div class="click-span-travel-back-div">
     <span id="click-span-travel-back-view">Turn Back</span>
-    <span id="click-span-travel-add-photos-view">Watch Photos</span>
-    <span id="click-span-travel-scroll-to-photos"><ion-icon name="arrow-round-down"></ion-icon></span>
+    <span id="click-span-travel-add-photos-view" data-toggle="modal" data-target="#view-markers-photos">Watch Photos</span>
   </div>
 </div>
 
 <?php $carousel = []; ?>
 
-<div class="slide-show">
-<?php echo Carousel::widget([
-  'items' => $carousel,
-  'options' => ['class' => 'carousel slide', 'data-interval' => 'false'],
-  'controls' => [
-  '<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>',
-  '<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>'
-  ]
- ]);
-?>
+<div class="modal fade" id="view-markers-photos" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header grey-modal-header">
+      <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title modal-title-repost-post"> <ion-icon name="images"></ion-icon> Photos from this place</h4>
+      </div>
+      <div class="modal-body body-slide-show">
+        <div class="slide-show">
+          <?php echo Carousel::widget([
+            'items' => $carousel,
+            'options' => ['class' => 'carousel slide', 'data-interval' => 'false'],
+            'controls' => [
+              '<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>',
+              '<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>'
+              ]
+              ]);
+              ?>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>

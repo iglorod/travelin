@@ -14,7 +14,7 @@ class OnePostEcho extends Widget{
 
     public function run(){
         return $this->render('one-post', [
-            'model'         => $this->trip,
+            'model' => $this->trip,
         ]);
     }
 }

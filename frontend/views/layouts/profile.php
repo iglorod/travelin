@@ -32,11 +32,11 @@ AppAsset::register($this);
 <?= $this->render('links', ['navbar_class' => 'navbar-main']) ?>
 <div class="scroll-bar"></div>
 <div class="text-center row middle-cont">
-    <?/*php if($this->params['background'] == '1.png'){*/?>
+    <?php if($this->params['is_author'] == true){?>
     <div class="col-xs-12 profile-upload-div">
         <span class="upload-background-span">Upload Background</span>
     </div>
-    <?/*php } */?> 
+    <?php } ?> 
 </div>
 </div>
 

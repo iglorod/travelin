@@ -11,6 +11,7 @@ use frontend\models\MarkerImage;
 use frontend\models\PostLikes;
 use frontend\models\Repost;
 use frontend\models\RepostLikes;
+use frontend\models\Followers;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -301,5 +302,39 @@ class PostController extends Controller
         }
 
         return $this->redirect(['site/profile','id' => Yii::$app->user->identity->id, 'type' => 'reposted_list']);
+    }
+
+    public function actionFollowingUser(){
+        $id = Yii::$app->request->post('id');
+        $followers = Followers::findOne([
+            'id_user'       => $id,
+            'id_follower'   => Yii::$app->user->identity->id
+        ]);
+
+        if($followers==null){
+            $followers = new Followers();
+            $followers->id_user = $id;
+            $followers->id_follower = Yii::$app->user->identity->id;
+            $followers->save(false);   
+        }else{
+            $followers->deleteFollowing();
+        }
+
+        echo $followers->getCount();
+        die();
+    }
+
+    public function actionNearbySearch(){
+        $type = Yii::$app->request->get('type');
+        $radius = Yii::$app->request->get('radius');
+        $lat = Yii::$app->request->get('lat');
+        $lng = Yii::$app->request->get('lng');
+
+        return $this->render('nearby', [
+            'type'      => $type,
+            'lat'       => $lat,
+            'lng'       => $lng,
+            'radius'    => $radius,
+        ]);
     }
 }

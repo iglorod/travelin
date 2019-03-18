@@ -10,7 +10,7 @@ use yii\helpers\Html;;
                         <img src="/frontend/web/uploads/profile_avatar/<?= $model->user->profile->avatar ?>" alt="Profile.img">
                     </div>
                     <div class="post-author-own-data">
-                        <div class="post-author-full-name"><?= $model->user->profile->first_name ?> <?= $model->user->profile->second_name ?> <span class="post-type-text">reposted a trip</span></div>
+                        <div class="post-author-full-name"><?= $model->user->profile->first_name ?> <?= $model->user->profile->second_name ?><?php if($model->user->profile->prime){ ?> <ion-icon name="at" class="verify-icon"></ion-icon> <?php } ?> <span class="post-type-text">reposted a trip</span></div>
                         <div class="post-update-date"><?= date("M. d",$model->created_at) ?></div>
                     </div>
                 </a>
@@ -26,6 +26,7 @@ use yii\helpers\Html;;
                     <ion-icon name="more"></ion-icon>
                     </button>
                 </div>
+                <div style="padding-top: 15px;"><?= $model->description ?></div>
             </div>
             <hr>
             <div class="profile-standart-data under-repost-standart-data">
@@ -71,7 +72,7 @@ use yii\helpers\Html;;
                     <div class="post-attributes post-attributes-data">
                         <div>Likes <span><?= $model_start->getRepostLikesCount() ?></span></div>
                         <div>Reposts <?= $model->getRepostsCount() ?></div>
-                        <div class="other-review-small"><a href="">other reviews</a></div>
+                        <div class="other-review-small"><a href="<?= Url::to(["/site/searching"]) . "&place_id=" . $model->id_place ?>">other reviews</a></div>
                     </div>
                     <hr>
                     <div class="post-attributes post-attributes-actions">

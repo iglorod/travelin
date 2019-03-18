@@ -7,6 +7,9 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 use frontend\models\Profile;
+use frontend\models\Followers;
+use frontend\models\Post;
+use frontend\models\Repost;
 
 /**
  * User model
@@ -201,5 +204,40 @@ class User extends ActiveRecord implements IdentityInterface
     public function getPosts()
     {
         return $this->hasMany(Post::className(), ['id_author' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFollowers()
+    {
+        return $this->hasMany(Followers::className(), ['id_user' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFollowers0()
+    {
+        return $this->hasMany(Followers::className(), ['id_follower' => 'id']);
+    }
+
+    public function getIsUserFollowing()
+    {
+        $count = Followers::find()->where([ "id_user" => $this->id, "id_follower" => Yii::$app->user->identity->id ])->count();
+        if($count >= 1) return "done-by-user";
+        return "";
+    }
+
+    public function getCountFollowers(){
+        return Followers::find()->where(['id_user'=>$this->id])->count();
+    }
+
+    public function getCountFollowing(){
+        return Followers::find()->where(['id_follower'=>$this->id])->count();
+    }
+
+    public function getCountPosts(){
+        return Post::find()->where(['id_author'=>$this->id])->count() + Repost::find()->where(['id_user'=>$this->id])->count();
     }
 }

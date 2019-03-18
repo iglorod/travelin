@@ -9,6 +9,7 @@ use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use frontend\assets\AppAsset;
 use common\widgets\Alert;
+use yii\helpers\Url;
 
 AppAsset::register($this);
 ?>
@@ -37,8 +38,13 @@ AppAsset::register($this);
     </div>
     <div class="col-12 col-lg-12">
         <div class="search-posts">
+        <?php if($this->params['searching'] == true) { ?>
+            <span class="text-search"><?= $this->params['searchedCity'] ?></span>
+            <a href="<?=Url::to(["/site/index"]) ?>" class="span-icon"><ion-icon name="close-circle-outline" class="span-icon-remove"></ion-icon></a>
+        <?php } else {?>
             <span class="text-search">Where to?</span>
             <span class="glyphicon glyphicon-stats span-icon"></span>
+        <?php } ?>
         </div>
     </div>
 </div>

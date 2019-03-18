@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3257202106eddf30f498199ce80465a3",
+    "content-hash": "d0d3050265334b873e5daafdbf3f150e",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -65,24 +65,6 @@
             "license": [
                 "MIT"
             ]
-        },
-        {
-            "name": "bower-asset/owl.carousel",
-            "version": "2.3.4",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:OwlFonk/OwlCarousel2.git",
-                "reference": "af851f9b567630d115930abd5480ffebccc72372"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/OwlFonk/OwlCarousel2/zipball/af851f9b567630d115930abd5480ffebccc72372",
-                "reference": "af851f9b567630d115930abd5480ffebccc72372"
-            },
-            "require": {
-                "bower-asset/jquery": ">=1.8.3"
-            },
-            "type": "bower-asset"
         },
         {
             "name": "bower-asset/punycode",
@@ -445,54 +427,58 @@
             "time": "2018-10-09T11:34:49+00:00"
         },
         {
-            "name": "kv4nt/yii2-owl-carousel2",
-            "version": "v1.0.1",
+            "name": "kartik-v/yii2-widget-rangeinput",
+            "version": "v1.0.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/kv4nt/yii2-owl-carousel2.git",
-                "reference": "63c45c0bfc7bf9a78972bdcf07fff193b4995553"
+                "url": "https://github.com/kartik-v/yii2-widget-rangeinput.git",
+                "reference": "dd9019bab7e5bf570a02870d9e74387891bbdb32"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kv4nt/yii2-owl-carousel2/zipball/63c45c0bfc7bf9a78972bdcf07fff193b4995553",
-                "reference": "63c45c0bfc7bf9a78972bdcf07fff193b4995553",
+                "url": "https://api.github.com/repos/kartik-v/yii2-widget-rangeinput/zipball/dd9019bab7e5bf570a02870d9e74387891bbdb32",
+                "reference": "dd9019bab7e5bf570a02870d9e74387891bbdb32",
                 "shasum": ""
             },
             "require": {
-                "bower-asset/owl.carousel": "*",
-                "yiisoft/yii2": "*"
+                "kartik-v/yii2-krajee-base": ">=1.9"
             },
             "type": "yii2-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
-                    "kv4nt\\owlcarousel\\": ""
+                    "kartik\\range\\": "src"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "MIT"
+                "BSD-3-Clause"
             ],
             "authors": [
                 {
-                    "name": "Victor Shumeyko",
-                    "email": "kvant90@gmail.com"
+                    "name": "Kartik Visweswaran",
+                    "email": "kartikv2@gmail.com",
+                    "homepage": "http://www.krajee.com/"
                 }
             ],
-            "description": "A Yii2 widget for owl carousel 2",
+            "description": "An enhanced Yii 2 widget encapsulating the HTML 5 range input (sub repo split from yii2-widgets)",
+            "homepage": "https://github.com/kartik-v/yii2-widget-rangeinput",
             "keywords": [
-                "carousel",
+                "HTML5",
                 "extension",
-                "owl",
-                "owlcarousel",
-                "owlcarousel2",
-                "yii2",
-                "yii2 carousel",
-                "yii2 owl",
-                "yii2 owl carousel",
-                "yii2 owlcarousel",
-                "yii2-owl-carousel"
+                "form",
+                "input",
+                "jquery",
+                "plugin",
+                "range",
+                "widget",
+                "yii2"
             ],
-            "time": "2017-09-15T11:16:39+00:00"
+            "time": "2018-09-07T10:05:08+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -2257,16 +2243,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "7.5.6",
+            "version": "7.5.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "09c85e14994df92e5ff1f5ec0b481bdb7d3d3df9"
+                "reference": "eb343b86753d26de07ecba7868fa983104361948"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/09c85e14994df92e5ff1f5ec0b481bdb7d3d3df9",
-                "reference": "09c85e14994df92e5ff1f5ec0b481bdb7d3d3df9",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/eb343b86753d26de07ecba7868fa983104361948",
+                "reference": "eb343b86753d26de07ecba7868fa983104361948",
                 "shasum": ""
             },
             "require": {
@@ -2284,7 +2270,7 @@
                 "phpunit/php-code-coverage": "^6.0.7",
                 "phpunit/php-file-iterator": "^2.0.1",
                 "phpunit/php-text-template": "^1.2.1",
-                "phpunit/php-timer": "^2.0",
+                "phpunit/php-timer": "^2.1",
                 "sebastian/comparator": "^3.0",
                 "sebastian/diff": "^3.0",
                 "sebastian/environment": "^4.0",
@@ -2337,7 +2323,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2019-02-18T09:24:50+00:00"
+            "time": "2019-03-16T07:31:17+00:00"
         },
         {
             "name": "psr/http-message",

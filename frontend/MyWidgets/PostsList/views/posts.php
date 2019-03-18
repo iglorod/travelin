@@ -55,7 +55,36 @@ function getImage($text){
     $start_string = stristr($text, '<img');
     $end = strpos($start_string, '>', 0);
     
-    return substr($start_string, 0, $end+1);
+    $result = substr($start_string, 0, $end+1);
+    
+    if (strpos($result, 'width="') !== false) {
+    $first_width = strpos($result, 'width="') + strlen('width="');
+    $second_width = strpos($result, '"',$first_width);
+    $first_width = $first_width-strlen('width="');
+    $total_width = substr($result, $first_width, $second_width-$first_width+1);
+    
+    $result = str_replace($total_width, "", $result);
+    }
+    
+    if (strpos($result, 'height="') !== false) {
+    $first_heigth = strpos($result, 'height="') + strlen('height="');
+    $second_heigth = strpos($result, '"',$first_heigth);
+    $first_heigth = $first_heigth-strlen('height="');
+    $total_heigth = substr($result, $first_heigth, $second_heigth-$first_heigth+1);
+    
+    $result = str_replace($total_heigth, "", $result);
+    }
+
+    if (strpos($result, 'style="') !== false) {
+      $first_style = strpos($result, 'style="') + strlen('style="');
+      $second_style = strpos($result, '"',$first_style);
+      $first_style = $first_style-strlen('style="');
+      $total_style = substr($result, $first_style, $second_style-$first_style+1);
+      
+      $result = str_replace($total_style, "", $result);
+    }
+
+    return $result;
 }
 ?>
     

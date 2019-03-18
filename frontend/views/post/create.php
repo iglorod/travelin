@@ -20,6 +20,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="set-city-input">
             <?= $form->field($model, 'id_place')->textInput(['placeholder' => 'Start Typing Place Name...', 'class' => 'form-control create-combo-input'])->label(false) ?>
+            
+            <?= $form->field($model, 'main_place_text')->hiddenInput(['class'=>'hidden-main-place'])->label(false); ?>
+            <?= $form->field($model, 'secondary_place_name')->hiddenInput(['class'=>'hidden-secondary-place'])->label(false); ?>
+
     </div>
     <span id="click-span">Confirm</span>
 </div>
@@ -197,7 +201,8 @@ function placeMarkerAndPanTo(latLng, map, id_marker, allMarkers) {
           position: latLng,
           map: map,
           icon: "http://maps.google.com/mapfiles/ms/icons/purple-dot.png",
-          id: id_marker
+          id: id_marker,
+          animation: google.maps.Animation.DROP
         });
         console.log(marker);
         map.panTo(latLng);

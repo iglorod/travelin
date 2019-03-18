@@ -11,9 +11,11 @@ use frontend\models\PostLikes;
 /**
  * This is the model class for table "post".
  *
- * @property int $id
+* @property int $id
  * @property int $id_author
  * @property string $id_place
+ * @property string $main_place_text
+ * @property string $secondary_place_name
  * @property string $text
  * @property int $created_at
  * @property int $updated_at
@@ -21,7 +23,10 @@ use frontend\models\PostLikes;
  *
  * @property Marker[] $markers
  * @property User $author
+ * @property PostLikes[] $postLikes
+ * @property Repost[] $reposts
  */
+ 
 class Post extends \yii\db\ActiveRecord
 {
     /** return map result from post/create */
@@ -46,6 +51,7 @@ class Post extends \yii\db\ActiveRecord
             [['id_author', 'created_at', 'updated_at'], 'integer'],
             [['text', 'polilynes', 'result_markers', 'result_polilyne'], 'string'],
             [['id_place'], 'string', 'max' => 100],
+            [['main_place_text', 'secondary_place_name'], 'string', 'max' => 150],
             [['id_author'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['id_author' => 'id']],
         ];
     }
@@ -59,6 +65,8 @@ class Post extends \yii\db\ActiveRecord
             'id' => 'ID',
             'id_author' => 'Id Author',
             'id_place' => 'Id Place',
+            'main_place_text' => 'Main Place Text',
+            'secondary_place_name' => 'Secondary Place Name',
             'text' => 'Text',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',

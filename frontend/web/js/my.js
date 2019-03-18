@@ -65,10 +65,11 @@ $('#modal-default').on("keyup","#search_autocomplete_input", function(e){
         var value = Object.values(data)[0];
         var structure = '<div class="searching-city">';
         $(value).each(function(){
+          var place_id = $(this)[0]['place_id'];
           var main_text = $(this)[0]['structured_formatting']['main_text'];
           var secondary_text = $(this)[0]['structured_formatting']['secondary_text'];
         
-          structure += '<div class="searched-city"><span>'+main_text+'</span><span class="city-parent">'+secondary_text+'</span></div>';
+          structure += '<a href="index.php?r=site/searching&place_id=' + place_id + '"><div class="searched-city"><span>'+main_text+'</span><span class="city-parent">'+secondary_text+'</span></div></a>';
         })
         structure += '</div>';
         
@@ -84,11 +85,8 @@ $('#modal-default').on("keyup","#search_autocomplete_input", function(e){
   }
 });
 
-$('.push-and-push').click(function(){
-    $.getJSON('https://maps.googleapis.com/maps/api/place/textsearch/json?types=point_of_interest&location=32.772553335091,-97.366847991943&radius=10&key=AIzaSyBB2gXITRe0zhIOQVJ_fyOVMt965cq_gO4',
-    function(data) {
-    console.log(data);
-    });
+$(document).on("click", ".searched-city", function() {
+  $('.search-place-input').val($(this).children().first().text());
 })
 
 $(function() {
@@ -114,6 +112,18 @@ $('.search-posts').click(function(){
 });
 
 $('.create-post-form').on('beforeSubmit', function(){
+  var fomatted_address = autocomplete.getPlace()['formatted_address'];
+  var arrayOfAddress = fomatted_address.split(',');
+  $('.hidden-main-place').val(arrayOfAddress[0]);
+  $('.hidden-secondary-place').val(arrayOfAddress[1]);
+  
+  $.each(arrayOfAddress, function( index, value ) {
+    if(index <= 1) return false;
+ 
+    var current_second_addr = $('.hidden-secondary-place').val();
+    $('.hidden-secondary-place').val(current_second_addr + ', ' + value); 
+  });
+  
   $('#post-id_place').val(placeId);
   
   var markersArray = [];
@@ -153,32 +163,26 @@ $('#click-span').click(function(){
     removeAllMarkersFromMap();
   }
   
-  $('.city-post-create').css({'visibility':'hidden', 'margin-top': '-200px', 'opacity': '0'});
+  $('.city-post-create').css({'display':'none', 'margin-top': '-200px', 'opacity': '0'});
 
-  $('.post-create').css({'visibility':'visible', 'position':'inherit', 'opacity':'1'});
+  $('.post-create').css({'display':'block', 'opacity':'1'});
   $('.redactor-toolbar').css({'display':'inherit'});
 })
 
 $('#click-span-back').click(function(){
-  $('.city-post-create').css({'visibility':'visible', 'margin-top': '0px', 'opacity': '1'});
+  $('.city-post-create').css({'display':'block', 'margin-top': '0px', 'opacity': '1'});
 
-  $('.post-create').css({'visibility':'hidden', 'opacity':'0'});
+  $('.post-create').css({'display':'none', 'opacity':'0'});
   $('.redactor-toolbar').css({'display':'none'});
-  setTimeout(function(){
-    $('.post-create').css({'position':'absolute'});
- },500);
 })
 
 $('#click-span-travel').click(function(){
-  $('.post-create').css({'visibility':'hidden', 'margin-top': '-200px', 'opacity': '0'});
+  $('.create-post-form').css({'display':'none'});
+  $('.post-create').css({'display':'block', 'margin-top': '-200px', 'opacity': '0'});
 
-  setTimeout(function(){
-    $('.post-create').css({'position':'absolute'});
- },500);
-
-  $('.post-map-create').css({'visibility':'visible', 'position':'relative', 'opacity':'1', 'margin-top': '0px' });
-  $('#map-create').css({'visibility':'visible', 'position':'relative', 'opacity':'1', 'height': '400px' });
-  $('.click-span-travel-back-div').css({'visibility':'visible', 'position':'inherit', 'opacity':'1'});
+  $('.post-map-create').css({'display':'block', 'opacity':'1', 'margin-top': '0px' });
+  $('#map-create').css({'display':'block', 'opacity':'1', 'height': '400px' });
+  $('.click-span-travel-back-div').css({'display':'block', 'opacity':'1'});
   $('.redactor-toolbar').css({'display':'none'});
   $('#changer-city-text').html(autocomplete.getPlace()['vicinity']);
 
@@ -186,15 +190,11 @@ $('#click-span-travel').click(function(){
 })
 
 $('#click-span-view-travel').click(function(){
-  $('.post-view').css({'visibility':'hidden', 'margin-top': '-200px', 'opacity': '0'});
+  $('.post-view').css({'margin-top': '-200px', 'opacity': '0', 'display': 'none'});
 
-  setTimeout(function(){
-    $('.post-view').css({'position':'absolute'});
- },500);
-
-  $('.post-map-create').css({'visibility':'visible', 'position':'relative', 'opacity':'1', 'margin-top': '0px' });
-  $('#map-create').css({'visibility':'visible', 'position':'relative', 'opacity':'1', 'height': '400px' });
-  $('.click-span-travel-back-div').css({'visibility':'visible', 'position':'inherit', 'opacity':'1'});
+  $('.post-map-create').css({'display':'block', 'opacity':'1', 'margin-top': '0px' });
+  $('#map-create').css({'display':'block', 'opacity':'1', 'height': '400px' });
+  $('.click-span-travel-back-div').css({'display':'block', 'opacity':'1'});
   $('.redactor-toolbar').css({'display':'none'});
 
   if(mapIsCreated == 0) initMapCreate();
@@ -204,11 +204,12 @@ $('#click-span-travel-back').click(function(){
   if($('.pushed-button-add-path').length >= 1) $('#button-add-path').click();
   hideDescription();
 
-  $('.post-create').css({'visibility':'visible', 'margin-top': '0px', 'opacity': '1', 'position': 'inherit'});
+  $('.create-post-form').css({'display':'block'});
+  $('.post-create').css({'display':'block', 'margin-top': '0px', 'opacity': '1'});
 
-  $('.post-map-create').css({'visibility':'hidden', 'position':'absolute', 'opacity':'0', 'margin-top': '200px' });
-  $('#map-create').css({'visibility':'hidden', 'position':'absolute', 'opacity':'0', 'height': '0px'});
-  $('.click-span-travel-back-div').css({'visibility':'hidden', 'position':'absolute', 'opacity':'0'});
+  $('.post-map-create').css({'display':'none', 'opacity':'0', 'margin-top': '200px' });
+  $('#map-create').css({'display':'none', 'opacity':'0', 'height': '0px'});
+  $('.click-span-travel-back-div').css({'display':'none', 'opacity':'0'});
   $('.redactor-toolbar').css({'display':'inherit'});
 
   hideSlideShow();
@@ -216,11 +217,11 @@ $('#click-span-travel-back').click(function(){
 })
 
 $('#click-span-travel-back-view').click(function(){
-  $('.post-view').css({'visibility':'visible', 'margin-top': '0px', 'opacity': '1', 'position': 'relative'});
+  $('.post-view').css({'margin-top': '0px', 'opacity': '1', 'display': 'block'});
 
-  $('.post-map-create').css({'visibility':'hidden', 'position':'absolute', 'opacity':'0', 'margin-top': '200px' });
-  $('#map-create').css({'visibility':'hidden', 'position':'absolute', 'opacity':'0', 'height': '0px'});
-  $('.click-span-travel-back-div').css({'visibility':'hidden', 'position':'absolute', 'opacity':'0'});
+  $('.post-map-create').css({'display':'none', 'opacity':'0', 'margin-top': '200px' });
+  $('#map-create').css({'display':'none', 'opacity':'0', 'height': '0px'});
+  $('.click-span-travel-back-div').css({'display':'block', 'opacity':'0'});
   $('.redactor-toolbar').css({'display':'inherit'});
 
   hideSlideShow();
@@ -484,15 +485,8 @@ $("#click-span-travel-add-photos-view").on("click", function(){
     return;
   }
 
-  if($(this).text() == "Watch Photos"){
     refreshImagesSlideShow();
     showSlideShow();
-    scrollToSlideShow();
-    $(this).text("Hide Photos");
-  }else if($(this).text() == "Hide Photos"){
-    hideSlideShow();
-    $(this).text("Watch Photos");
-  }
 })
 
 $('#click-span-travel-scroll-to-photos').click(function(){
@@ -506,16 +500,16 @@ scrollToSlideShow = function(){
 }
 
 showSlideShow = function(){
-  $('#click-span-travel-scroll-to-photos').css({"visibility": "visible"});
-  $('.slide-show').css({'position': 'relative', 'visibility': 'visible', 'height': '350px', 'opacity': '1'});
-  $('.carousel').css({'position': 'relative', 'visibility': 'visible', 'height': '350px', 'opacity': '1'});  
+  $('#click-span-travel-scroll-to-photos').css({"display": "block"});
+  $('.slide-show').css({'display': 'block', 'height': '350px', 'opacity': '1'});
+  $('.carousel').css({'display': 'block', 'height': '350px', 'opacity': '1'});  
 }
 
 hideSlideShow = function(){ 
-  $('#click-span-travel-scroll-to-photos').css({"visibility": "hidden"});
+  $('#click-span-travel-scroll-to-photos').css({"display": "none"});
   $("#click-span-travel-add-photos").text("Add Photos");
-  $('.slide-show').css({'position': 'absolute', 'visibility': 'hidden', 'height': '0px', 'opacity': '0'});
-  $('.carousel').css({'position': 'absolute', 'visibility': 'hidden', 'height': '0px', 'opacity': '0'});
+  $('.slide-show').css({'display': 'none', 'height': '0px', 'opacity': '0'});
+  $('.carousel').css({'display': 'none', 'height': '0px', 'opacity': '0'});
 }
 
 getRandomArbitrary = function(min, max) {
@@ -759,7 +753,7 @@ refreshDescription = function(){
 showDescription = function(){
   hideSlideShow();
 
-  $('.place-brief-descr').css({'position':'relative', 'opacity': "1", 'height': 'auto', 'margin-top': '30px', 'visibility': 'visible', 'z-index': 'unset'});
+  $('.place-brief-descr').css({'opacity': "1", 'height': 'auto', 'margin-top': '30px', 'z-index': 'unset', 'display': 'block'});
 
   refreshDescription();
 
@@ -767,10 +761,7 @@ showDescription = function(){
 }
 
 hideDescription = function(){
-  $('.place-brief-descr').css({'opacity': "0", 'height': '0px', 'margin-top': '0px', 'visibility': 'hidden', 'z-index': '0'});
-  setTimeout(function(){
-    $('.place-brief-descr').css({'position':'absolute'});
-  },500);
+  $('.place-brief-descr').css({'opacity': "0", 'height': '0px', 'margin-top': '0px', 'z-index': '0', 'display': 'none'});
 
  $('#click-span-travel-add-descript').text('Add Description');
 }
@@ -1005,8 +996,8 @@ $('#uploadAvatarImage').on('hidden.bs.modal', function () {
 $('.autoplay').slick({
   slidesToShow: 1,
   slidesToScroll: 1,
-  autoplay: false,
-  autoplaySpeed: 1500,
+  autoplay: false,/*
+  autoplaySpeed: 1500,*/
 });
 
 $(".like_post").click(function(){
@@ -1038,8 +1029,7 @@ $(".like_repost").click(function(){
   };
 
   $(this).toggleClass("done-by-user");
- // var res = "sss";
-  //$(this).parent().parent().parent().first().children().first().children().first().children().text(res);
+
   var span = this;
   $.ajax({
     url: 'index.php?r=post/like-repost',
@@ -1047,6 +1037,30 @@ $(".like_repost").click(function(){
     data: id_repost,
       success: function(res){
         $(span).parent().parent().parent().first().children().first().children().first().children().text(res);
+      },
+      error: function(){
+        alert('Error!');
+      }
+  });
+}
+);
+
+$(".btn-follow-profile").click(function(){
+  var id_user = {
+      'id':$(this).attr('user')
+  };
+
+  $(this).toggleClass("btn-follow-profile-clicked");
+
+  $.ajax({
+    url: 'index.php?r=post/following-user',
+    type: 'POST',
+    data: id_user,
+      success: function(res){
+        $('.subscribers-profile-count').text(res);
+        
+        if($('.btn-follow-profile span').text() == "Unfollow user") $('.btn-follow-profile span').text("Follow user");
+        else $('.btn-follow-profile span').text("Unfollow user");      
       },
       error: function(){
         alert('Error!');
@@ -1084,4 +1098,44 @@ $(document).on("click", ".copy-share-link", function() {
 $('.toggle-popover-link').click(function(){
   var link = $(this).attr('post_id');
   $('#hidden-link-post').val($('#hidden-link-const').val() + link);
+})
+
+var type_search;
+
+$('.checking-search-parameters').click(function(){
+
+  $('.checking-search-parameters').each(function(index, value) {
+    $(value).removeClass('checking-search-parameters-active');
+  })
+
+  $(this).addClass('checking-search-parameters-active');
+
+  type_search = $(this).children().last().attr('type');
+})
+
+$('.search-button').click(function(){
+  if(typeof autocomplete.getPlace() === 'undefined'){
+    Swal.fire(
+      'Not Found',
+      "Check place first for searching",
+      'info'
+    )
+    return;
+  }
+
+  if(typeof type_search === 'undefined'){
+    Swal.fire(
+      'Type Not Cheched',
+      "Check type for searching first",
+      'info'
+    )
+    return;
+  }
+
+  var lat = autocomplete.getPlace().geometry.location.lat();
+  var lng = autocomplete.getPlace().geometry.location.lng();
+  var radius = $('.input-group .form-control').val();
+
+  $('.search-button-action-click').attr('href', 'index.php?r=post/nearby-search&type=' + type_search + '&lat=' + lat + '&lng=' + lng + '&radius=' + radius);
+  $('.search-button-action-click')[0].click();
 })

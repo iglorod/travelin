@@ -5,6 +5,7 @@ use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use kartik\date\DatePicker;
 use frontend\MyWidgets\PostsList\PostsAllOut;
+use frontend\MyWidgets\AllRoadsWidget\AllRoads;
 use frontend\MyWidgets\PostsList\assets\PostsAsset;
 
 PostsAsset::register($this);
@@ -29,25 +30,25 @@ PostsAsset::register($this);
 			</div>
 			<?php } ?>
 			<div>
-				<div class="profile-long-name"><span><?= $model->first_name; ?> <?= $model->second_name; ?></span></div>
+			<div class="profile-long-name"><span><?= $model->first_name; ?> <?= $model->second_name; ?> <?php if($model->prime){ ?> <ion-icon name="at" class="verify-icon"></ion-icon> <?php } ?></span></div>
 				<div class="profile-username"><span><?= $model->user->username ?></span></div>
 			</div>
 			<div class="profile-static-data-div">
 				<div class="profile-stat">
 					<div class="profile-stat-title">Publications</div>
-					<div class="profile-stat-data">3</div>
+					<div class="profile-stat-data"><?= $model->user->getCountPosts() ?></div>
 				</div>
 			</div>
 			<div class="profile-static-data-div">
 				<div class="profile-stat">
-					<div class="profile-stat-title">Subscribers</div>
-					<div class="profile-stat-data">3</div>
+					<div class="profile-stat-title">Followers</div>
+					<div class="profile-stat-data subscribers-profile-count"><?= $model->user->getCountFollowers() ?></div>
 				</div>		
 			</div>
 			<div class="profile-static-data-div">
 				<div class="profile-stat">
-					<div class="profile-stat-title">Subscribed</div>
-						<div class="profile-stat-data">3</div>
+					<div class="profile-stat-title">Following</div>
+						<div class="profile-stat-data"><?= $model->user->getCountFollowing() ?></div>
 					</div>
 				</div>
 			</div>
@@ -56,6 +57,16 @@ PostsAsset::register($this);
 			<div class="inl-blocks inl-blocks-button">
 				<div>
 					<button class="btn btn-edit-profile" data-toggle="modal" data-target="#profile-user-data"><span>Edit profile</span> <ion-icon name="browsers"></ion-icon></button>
+				</div>
+			</div>
+			<?php } else if(!Yii::$app->user->isGuest) { ?>
+				<div class="inl-blocks inl-blocks-button">
+				<div>
+				<?php if($model->user->getIsUserFollowing()){?>
+					<button class="btn btn-follow-profile btn-follow-profile-clicked" user="<?= $model->user->id ?>"><span>Unfollow user</span> <ion-icon name="person-add"></ion-icon></button>
+				<?php }else{?>
+					<button class="btn btn-follow-profile" user="<?= $model->user->id ?>"><span>Follow user</span> <ion-icon name="person-add"></ion-icon></button>
+				<?php } ?>
 				</div>
 			</div>
 			<?php } ?>
@@ -89,9 +100,12 @@ PostsAsset::register($this);
 			'trips'			=> $trips,
 			'pagination'	=> $pagination
 		]);
-	} else if($current_type == 'travel_history') { ?>
-
-	<?php } ?>
+	} else if($current_type == 'travel_history') { 
+		echo AllRoads::widget([
+			'trip_polilynes'	=> $polilynes,
+			'image_maded'		=> $image_maded
+		]);
+	} ?>
 
 	<div id="uploadBackImage" class="modal" role="dialog">
 		<div class="modal-dialog profile-modal-dialog">

@@ -37,7 +37,7 @@ class Profile extends \yii\db\ActiveRecord
     {
         return [
             [['user_id'], 'required'],
-            [['user_id', 'gender'], 'integer'],
+            [['user_id', 'gender', 'prime', 'admin'], 'integer'],
             [['avatar'], 'string', 'max' => 255],
             [['first_name', 'second_name', 'middle_name'], 'string', 'max' => 32],
             [['background_url'], 'string', 'max' => 500],
@@ -60,6 +60,8 @@ class Profile extends \yii\db\ActiveRecord
             'birthday' => 'Birthday',
             'gender' => 'Gender',
             'background_url' => 'Background Url',
+            'prime' => 'Prime',
+            'admin' => 'Admin',
         ];
     }
 
@@ -69,5 +71,10 @@ class Profile extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
+    }
+
+    public function getAdmin()
+    {
+        return $this->admin;
     }
 }

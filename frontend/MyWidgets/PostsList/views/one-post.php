@@ -19,7 +19,7 @@ use yii\helpers\Html;;
                         <img src="/frontend/web/uploads/profile_avatar/<?= $model->author->profile->avatar ?>" alt="Profile.img">
                     </div>
                     <div class="post-author-own-data">
-                        <div class="post-author-full-name"><?= $model->author->profile->first_name ?> <?= $model->author->profile->second_name ?> <span class="post-type-text">made a report</span></div>
+                        <div class="post-author-full-name"><?= $model->author->profile->first_name ?> <?= $model->author->profile->second_name ?><?php if($model->author->profile->prime){ ?> <ion-icon name="at" class="verify-icon"></ion-icon> <?php } ?> <span class="post-type-text">made a report</span></div>
                         <div class="post-update-date"><?= date("M. d",$model->updated_at) ?></div>
                     </div>
                 </a>
@@ -65,7 +65,7 @@ use yii\helpers\Html;;
                     <div class="post-attributes post-attributes-data">
                         <div>Likes <span><?= $model->getLikesCount() ?></span></div>
                         <div>Reposts <?= $model->getRepostsCount() ?></div>
-                        <div class="other-review-small"><a href="">other reviews</a></div>
+                        <div class="other-review-small"><a href="<?= Url::to(["/site/searching"]) . "&place_id=" . $model->id_place ?>">other reviews</a></div>
                     </div>
                     <hr>
                     <div class="post-attributes post-attributes-actions">
