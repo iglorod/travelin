@@ -148,11 +148,7 @@ $('#modal-default').on('hidden.bs.modal', function (e) {
 
 $('#click-span').click(function(){
   if($('#post-id_place').val() == "" || typeof autocomplete.getPlace() === 'undefined') {
-    Swal.fire(
-      'Place Name',
-      'Please set location of your trip. Start to type some text...',
-      'info'
-    )
+    
     return; 
   }
 
@@ -1139,3 +1135,93 @@ $('.search-button').click(function(){
   $('.search-button-action-click').attr('href', 'index.php?r=post/nearby-search&type=' + type_search + '&lat=' + lat + '&lng=' + lng + '&radius=' + radius);
   $('.search-button-action-click')[0].click();
 })
+
+$(".account-status-change").click(function(){
+  var id_post = {
+      'id':$(this).attr('id_user')
+  };
+ 
+  var span = this;
+
+  if($(span).parent().parent().children().eq(5).children().text() == 'Banned'){
+    Swal.fire(
+      'User banned',
+      'Please unban user first...',
+      'info'
+    );
+    return;
+  } 
+
+  $.ajax({
+    url: 'index.php?r=site/user-prime',
+    type: 'POST',
+    data: id_post,
+      success: function(res){
+        var return_text = "";
+        if(res == "1") return_text = 'PRIME';
+        else return_text = 'Usual';
+        $(span).parent().parent().children().eq(5).children().text(return_text);
+      },
+      error: function(){
+        alert('Error!');
+      }
+  });
+}
+);
+
+$(".account-ban-change").click(function(){
+  var id_post = {
+      'id':$(this).attr('id_user')
+  };
+
+  var span = this;
+  $.ajax({
+    url: 'index.php?r=site/user-ban',
+    type: 'POST',
+    data: id_post,
+      success: function(res){
+        var return_text = "";
+        if(res == "1") return_text = 'Banned';
+        else if(res == "2") return_text = 'PRIME';
+        else if(res == "3") return_text = 'Usual';
+        $(span).parent().parent().children().eq(5).children().text(return_text);
+      },
+      error: function(){
+        alert('Error!');
+      }
+  });
+}
+);
+
+$('.class-for-banned').click(function(){
+  Swal.fire(
+    'Ban',
+    'You are banned...',
+    'info'
+  );
+})
+
+$(".btn-ban-profile").click(function(){
+  var id_user = {
+      'id':$(this).attr('profile')
+  };
+
+  $(this).toggleClass("btn-banned-profile-clicked");
+
+  $.ajax({
+    url: 'index.php?r=site/user-ban',
+    type: 'POST',
+    data: id_user,
+      success: function(res){
+        var return_text = "";
+        if(res == "1") return_text = 'Unban user';
+        else return_text = 'Ban user';
+        
+        $('.btn-ban-profile span').text(return_text);      
+      },
+      error: function(){
+        alert('Error!');
+      }
+  });
+}
+);

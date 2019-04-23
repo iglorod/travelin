@@ -20,8 +20,9 @@ use yii\helpers\Html;;
                     data-toggle="popover" 
                     data-placement="bottom"
                     data-content="
-                    <?php if($model->user->id == Yii::$app->user->identity->id) echo '<div><a href=' . Url::to(["/post/delete"]) . '>Delete</a></div>'; ?>
-                    <?/*php if($model->author->id != Yii::$app->user->identity->id || Yii::$app->user->isGuest) echo '<div><a href=' . Url::to(["/post/repost"]) . '>Repost</a></div>'; */?>
+                    <div><a href='<?php echo Url::to(["/site/profile"]) . '&id=' . $model->user->id . '&type=trips_list'; ?>'>Reporter profile</a></div>
+                    <div><a href='<?php echo Url::to(["/post/view"]) . '&id=' . $model->post->id; ?>'>View post</a></div>
+                    <?php if($model->user->id == Yii::$app->user->identity->id) echo '<div><a href=' . Url::to(["/post/delete-repost"]) . '&id=' . $model->id . '>Delete</a></div>'; ?>
                     ">
                     <ion-icon name="more"></ion-icon>
                     </button>
@@ -64,7 +65,7 @@ use yii\helpers\Html;;
                 
                     <div class="autoplay post-autoplay-<?= $model->id ?>">
                     </div>
-                    <?//php echo '<script>getPlacesOfInterest(' . json_encode($array_markers) . ',' . $model->id . ');</script>';?>           
+                    <?php echo '<script>getPlacesOfInterest(' . json_encode($array_markers) . ',' . $model->id . ');</script>';?>           
                     <hr>
                 <?php } ?>
 
@@ -73,6 +74,7 @@ use yii\helpers\Html;;
                         <div>Likes <span><?= $model_start->getRepostLikesCount() ?></span></div>
                         <div>Reposts <?= $model->getRepostsCount() ?></div>
                         <div class="other-review-small"><a href="<?= Url::to(["/site/searching"]) . "&place_id=" . $model->id_place ?>">other reviews</a></div>
+                        <div class="address-city-from-trip"><ion-icon name="pin"></ion-icon> <?= $model->main_place_text ?>, <?= $model->secondary_place_name ?></div>
                     </div>
                     <hr>
                     <div class="post-attributes post-attributes-actions">
@@ -82,6 +84,13 @@ use yii\helpers\Html;;
                         </div>
                         <div>
                             <a href="<?= Url::to(["/site/sign-up"]) ?>">Repost <ion-icon name="repeat"></ion-icon></a>
+                        </div>
+                        <?php } else if(Yii::$app->user->identity->profile->ban == '1'){?>
+                        <div>
+                            <a class="class-for-banned">Like <ion-icon name="thumbs-up"></ion-icon></a>
+                        </div>
+                        <div>
+                            <a class="class-for-banned">Repost <ion-icon name="repeat"></ion-icon></a>
                         </div>
                         <?php }else{ ?>
                         <div>

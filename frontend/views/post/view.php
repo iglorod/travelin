@@ -30,19 +30,6 @@ $this->title = 'Trip Report';
                         <div class="post-update-date"><?= date("M. d",$model->updated_at) ?></div>
                     </div>
                 </a>
-                <div class="action-menu-post">
-                    <button type="button" class="simple-popover-button" 
-                    data-container="body"
-                    data-toggle="popover" 
-                    data-placement="bottom"
-                    data-content="
-                    <?php if($model->author->id == Yii::$app->user->identity->id) echo '<div><a href=' . Url::to(["/post/update"]) . '&id=' . $model->id . '>Update</a></div>'; ?>
-                    <?php if($model->author->id == Yii::$app->user->identity->id) echo '<div><a href=' . Url::to(["/post/delete"]) . '>Delete</a></div>'; ?>
-                    <?php if($model->author->id != Yii::$app->user->identity->id || Yii::$app->user->isGuest) echo '<div><a href=' . Url::to(["/post/repost"]) . '>Repost</a></div>'; ?>
-                    ">
-                    <ion-icon name="more"></ion-icon>
-                    </button>
-                </div>
             </div>
             <div class="post-standart-data-view">
               <?= $model->text ?>

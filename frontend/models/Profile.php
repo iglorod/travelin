@@ -37,7 +37,7 @@ class Profile extends \yii\db\ActiveRecord
     {
         return [
             [['user_id'], 'required'],
-            [['user_id', 'gender', 'prime', 'admin'], 'integer'],
+            [['user_id', 'gender', 'prime', 'admin', 'ban'], 'integer'],
             [['avatar'], 'string', 'max' => 255],
             [['first_name', 'second_name', 'middle_name'], 'string', 'max' => 32],
             [['background_url'], 'string', 'max' => 500],
@@ -62,6 +62,7 @@ class Profile extends \yii\db\ActiveRecord
             'background_url' => 'Background Url',
             'prime' => 'Prime',
             'admin' => 'Admin',
+            'ban'   => 'Ban'
         ];
     }
 
@@ -76,5 +77,27 @@ class Profile extends \yii\db\ActiveRecord
     public function getAdmin()
     {
         return $this->admin;
+    }
+
+    public function isBanned()
+    {
+        if($this->ban == "1") return true;
+        return false;
+    }
+    
+    public function getCountBanned($array){
+        $count = 0;
+        foreach($array as $val){
+            if($val['ban'] == '1') $count++;
+        }
+        return $count;
+    }
+
+    public function post_count($array, $val){
+        $count = 0;
+        foreach($array as $val1){
+            if($val1[0]['id_author'] == $val) $count++;
+        }
+        return $count;
     }
 }

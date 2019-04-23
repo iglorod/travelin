@@ -33,7 +33,6 @@ $this->title = 'Search Nearby';
 </div>
 
 <div id="append-to-nearby">
-<div class="back-nearby-result row" lat="50.4580345" lng="30.50350339999999"><div class="image-nearby-result-div col-xs-5"><img src="uploads/no_picture.png" alt="Photo"></div><div class="col-xs-7"><div class="main-nearby-name">Helicopter landing ground</div><div class="stars-open-nearby"></div><div class="address-nearby"><ion-icon name="pin" role="img" class="hydrated" aria-label="pin"></ion-icon>вулиця Кудрявська, 26/28, Київ</div></div></div>
 </div>
 
 <div class="modal fade" id="view-map-nearby" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

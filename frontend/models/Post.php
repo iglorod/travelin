@@ -113,4 +113,11 @@ class Post extends \yii\db\ActiveRecord
     {
         return Repost::find()->where(["id_post" => $this->id])->count();
     }
+
+    public function getIsOneAuthor($model1, $model2){
+        foreach($model2 as $val){
+            if($val['id_post'] != $model1[0]['id']) return false;
+        }
+        return true;
+    }
 }

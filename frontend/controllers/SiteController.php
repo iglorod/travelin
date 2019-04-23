@@ -15,6 +15,7 @@ use frontend\models\SignupForm;
 use frontend\models\ContactForm;
 use frontend\models\Profile;
 use frontend\models\ImageUpload;
+use frontend\models\Followers;
 use frontend\models\PostLikes;
 use frontend\models\Repost;
 use frontend\models\Marker;
@@ -87,9 +88,32 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        $profiles = Profile::find()
-        ->where(['prime' => 1])
-        ->all();
+        if(Yii::$app->user->isGuest){
+            $profiles = Profile::find()
+                ->where(['prime' => 1])
+                ->andWhere(['ban' => 0])
+                ->all();
+        }else{
+            $following = Followers::find()
+            ->where(['id_follower' => Yii::$app->user->id])
+            ->all();
+
+            $array_profi = [];
+            foreach($following as $follow){
+                array_push($array_profi, $follow->user->profile->id);
+            }
+
+            $profiles = Profile::find()
+                ->andWhere(['and',
+                    ['prime'=>1],
+                    ['ban'=>0]
+                ])
+                ->orWhere(['and',
+                    ['id' => $array_profi],
+                    ['ban'=>0]
+                ])
+                ->all();
+        }
 
         $arr_users = array();
 
@@ -146,7 +170,11 @@ class SiteController extends Controller
         }
 
         $session = Yii::$app->session;
-        $recently_searched = json_decode(Yii::$app->session->get('cities_list'));
+        if(json_decode(Yii::$app->session->get('cities_list')) == null){
+            $recently_searched = [];    
+        }else{
+            $recently_searched = json_decode(Yii::$app->session->get('cities_list'));
+        }
 
         return $this->render('index',[
             'trips'             => $array_to_show,
@@ -596,8 +624,54 @@ class SiteController extends Controller
         ->where(['<>', 'id', Yii::$app->user->identity->profile->id])
         ->all();
 
+        $this->layout = 'simple';
         return $this->render('users-list', [
             'profiles' => $profiles,
         ]);
+    }
+
+    public function actionUserPrime(){
+        $id = Yii::$app->request->post('id');
+        $profile = Profile::findOne([
+            'id' => $id,
+        ]);
+    
+        if($profile==null){   //якщо лайк не існує, то створимо його
+            echo null;
+            die();
+        }
+        
+        if($profile->prime) $profile->prime = 0;
+        else $profile->prime = 1;
+
+        $profile->save();
+
+        echo $profile->prime;
+        die();
+    }
+
+    public function actionUserBan(){
+        $id = Yii::$app->request->post('id');
+        $profile = Profile::findOne([
+            'id' => $id,
+        ]);
+    
+        if($profile==null){   //якщо лайк не існує, то створимо його
+            echo null;
+            die();
+        }
+        
+        if($profile->ban) $profile->ban = 0;
+        else $profile->ban = 1;
+
+        $profile->save();
+
+        if($profile->ban == 0) {
+            if($profile->prime) { echo '2'; die(); }
+            else { echo '3'; die(); }
+        }
+
+        echo $profile->ban;
+        die();
     }
 }

@@ -59,13 +59,23 @@ PostsAsset::register($this);
 					<button class="btn btn-edit-profile" data-toggle="modal" data-target="#profile-user-data"><span>Edit profile</span> <ion-icon name="browsers"></ion-icon></button>
 				</div>
 			</div>
-			<?php } else if(!Yii::$app->user->isGuest) { ?>
+			<?php } else if(!Yii::$app->user->isGuest && Yii::$app->user->identity->profile->admin == "0") { ?>
 				<div class="inl-blocks inl-blocks-button">
 				<div>
 				<?php if($model->user->getIsUserFollowing()){?>
 					<button class="btn btn-follow-profile btn-follow-profile-clicked" user="<?= $model->user->id ?>"><span>Unfollow user</span> <ion-icon name="person-add"></ion-icon></button>
 				<?php }else{?>
 					<button class="btn btn-follow-profile" user="<?= $model->user->id ?>"><span>Follow user</span> <ion-icon name="person-add"></ion-icon></button>
+				<?php } ?>
+				</div>
+			</div>
+			<?php }else if(Yii::$app->user->identity->profile->admin == "1") { ?>
+				<div class="inl-blocks inl-blocks-button">
+				<div>
+				<?php if($model->user->profile->isBanned()){?>
+					<button class="btn btn-ban-profile btn-banned-profile-clicked" profile="<?= $model->user->profile->id ?>"><span>Unban user</span> <ion-icon name="alert"></ion-icon></button>
+				<?php }else{?>
+					<button class="btn btn-ban-profile" profile="<?= $model->user->profile->id ?>"><span>Ban user</span> <ion-icon name="alert"></ion-icon></button>
 				<?php } ?>
 				</div>
 			</div>

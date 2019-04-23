@@ -36,18 +36,6 @@ class ImageUpload extends Model{
             file_put_contents($target, $data);
 
             return $filename;
-
-     /*       $info = pathinfo($_FILES['userFile']['name']);
-            $name = $this->image['name'];
-            $expl = explode(".", $name);
-            $baseName = $expl[0];
-            $extension = $expl[1];
-
-            $filename = strtolower(md5(uniqid($baseName)) . '.' . $extension);
-
-            $target = Yii::getAlias('@frontend') . '/web/uploads/marker_images/' . $filename;
-            move_uploaded_file( $this->image['tmp_name'], $target);
-            return $filename;*/
     }
 
     public function deleteOldFiles($fileList){

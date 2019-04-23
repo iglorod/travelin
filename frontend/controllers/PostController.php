@@ -17,6 +17,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\web\UploadedFile;
+use yii\helpers\ArrayHelper;
 
 
 /**
@@ -116,7 +117,8 @@ class PostController extends Controller
         $images = json_encode($images);
         $model->polilynes = json_encode(unserialize($model->polilynes));
 
-        
+        $this->layout = 'main_simple';
+
         return $this->render('view', [
             'model'     => $model,
             'markers'   => $markers,
@@ -131,6 +133,11 @@ class PostController extends Controller
      */
     public function actionCreate()
     {
+        if(Yii::$app->user->identity->profile->ban == '1') {
+            echo 'You are banned...';
+            die();
+            return;
+        }
         $model = new Post();
         $model2 = new ImageUpload();
 
@@ -330,11 +337,85 @@ class PostController extends Controller
         $lat = Yii::$app->request->get('lat');
         $lng = Yii::$app->request->get('lng');
 
+        $this->layout = 'main_simple';
         return $this->render('nearby', [
             'type'      => $type,
             'lat'       => $lat,
             'lng'       => $lng,
             'radius'    => $radius,
         ]);
+    }
+
+    public function actionDeletePost(){
+        $id = Yii::$app->request->get('id');
+
+        $reposts = Repost::find()
+        ->where(['id_post' => $id])
+        ->all();
+
+        $reposts_id = ArrayHelper::toArray($reposts, [
+            'frontend\models\Repost' => [
+                'id',
+            ],
+        ]);
+
+        $repost_likes = RepostLikes::find()
+        ->where(['id_repost' => ArrayHelper::getColumn($reposts_id, 'id')])
+        ->all();
+
+        foreach($repost_likes as $like){
+            $like->delete();
+        }
+
+        foreach ($reposts as $repost) {
+            if($repost!=null) $repost->delete();
+        }
+
+        $likes = PostLikes::find()
+        ->where(['id_post' => $id])
+        ->all();
+
+        foreach($likes as $like){
+            $like->delete();
+        }
+
+        $markers = Marker::find()
+        ->where(['id_post' => $id])
+        ->all();
+
+        foreach($markers as $value){
+            $marker_images = MarkerImage::find()
+            ->where(['id_marker' => $value->id])
+            ->all();
+
+            foreach($marker_images as $image){
+                $image->delete();
+            }
+
+            if($value!=null) $value->delete();
+        }
+
+
+        $model = Post::findOne($id);
+        if($model!=null) $model->delete();
+
+        return $this->redirect(['site/index']);
+    }
+
+    public function actionDeleteRepost(){
+        $id = Yii::$app->request->get('id');
+
+        $likes = RepostLikes::find()
+        ->where(['id_repost' => $id])
+        ->all();
+
+        foreach($likes as $like){
+            $like->delete();
+        }
+
+        $model = Repost::findOne($id);
+        if($model!=null) $model->delete();
+
+        return $this->redirect(['site/index']);
     }
 }

@@ -62,6 +62,13 @@ class LoginForm extends Model
         return false;
     }
 
+    public function loginTest($user)
+    {
+        if($user[0]['username'] == "") return false;
+        if($user[0]['password'] == "") return false;
+        return true;
+    }
+
     /**
      * Finds user by [[username]]
      *

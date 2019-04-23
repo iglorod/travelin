@@ -41,7 +41,7 @@
   var totalCountryCount;
 
 function initialize() {
-    //initMapCreate();
+    initMapCreate();
 }
 
 function initMapCreate() {
